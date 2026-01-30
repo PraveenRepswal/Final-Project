@@ -1,0 +1,32 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache/
+.coverage
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Environment Variables
+.env
+
+# Logs and Debug Output
+*.log
+extracted_text.txt
+last_model_response.txt
+debug_*.txt
+verify_output.txt
+
+# OS Files
+.DS_Store
+Thumbs.db
