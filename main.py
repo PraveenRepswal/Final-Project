@@ -14,18 +14,18 @@ from dotenv import load_dotenv
 from datetime import datetime
 from functools import partial
 
-# Backend Imports
-from backend.common.models import ResumeData
-from backend.resume_parsing.parser import ResumeParser
-from backend.resume_parsing.ai_extractor import check_ollama_connection
-from backend.interview.interviewer import InterviewManager
-# from backend.interview.engine import InterviewManager
+# functions Imports
+from functions.common.models import ResumeData
+from functions.resume_parsing.parser import ResumeParser
+from functions.resume_parsing.ai_extractor import check_ollama_connection
+from functions.interview.interviewer import InterviewManager
+# from functions.interview.engine import InterviewManager
 
-from backend.job_portal.search import search_jobs
-from backend.job_portal.matcher import JobMatcher
-from backend.chat.rag_engine import RAGEngine
-from backend.ats.scorer import calculate_ats_score_gemini, ATSScorer
-from backend.tracker.tracker import ApplicationTracker, VALID_STATUSES, VALID_ROLE_TYPES
+from functions.job_portal.search import search_jobs
+from functions.job_portal.matcher import JobMatcher
+from functions.chat.rag_engine import RAGEngine
+from functions.ats.scorer import calculate_ats_score_gemini, ATSScorer
+from functions.tracker.tracker import ApplicationTracker, VALID_STATUSES, VALID_ROLE_TYPES
 
 # Configure logging
 logging.basicConfig(

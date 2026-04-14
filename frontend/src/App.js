@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { Upload, Target, MessageCircle, Search, BarChart3, Mic, Home as HomeIcon } from 'lucide-react';
 import Home from './components/Home';
 import ResumeUpload from './components/ResumeUpload';
@@ -13,7 +13,6 @@ import './App.css';
 
 function Navigation() {
   const location = useLocation();
-  const isHome = location.pathname === '/';
 
   const navItems = [
     { path: '/', label: 'Home', icon: HomeIcon },
@@ -63,6 +62,7 @@ function App() {
             <Route path="/jobs" element={<JobSearch />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/interview" element={<MockInterview />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 
