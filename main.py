@@ -18,6 +18,7 @@ from functools import partial
 from functions.common.models import ResumeData
 from functions.resume_parsing.parser import ResumeParser
 from functions.resume_parsing.ai_extractor import check_ollama_connection
+from functions.common.llama_cpp_client import default_model as llama_cpp_default_model
 from functions.interview.interviewer import InterviewManager
 # from functions.interview.engine import InterviewManager
 
@@ -90,6 +91,9 @@ def parse_resume(file, provider: str, model: str, think: bool = True):
         if provider == "gemini":
             if not selected_model or selected_model.startswith("qwen"):
                 selected_model = "gemini-2.5-flash"
+        elif provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            if not selected_model or selected_model.startswith("qwen"):
+                selected_model = llama_cpp_default_model()
         
         parser = ResumeParser(model=selected_model, provider=provider, think=think)
         logger.info(f"Processing file: {file.name}")
@@ -138,7 +142,10 @@ def calculate_ats_score(job_description: str, provider: str, model: str, think: 
     
     try:
         selected_model = model
-        if provider == "gemini": selected_model = "gemini-2.5-flash"
+        if provider == "gemini":
+            selected_model = "gemini-2.5-flash"
+        elif provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            selected_model = llama_cpp_default_model()
             
         scorer = ATSScorer(model=selected_model, provider=provider, think=think)
         result = scorer.calculate_score(current_resume_data, job_description)
@@ -188,7 +195,9 @@ def chat_response(message, history, provider, model, think=True):
     try:
         selected_model = model
         if provider == "gemini":
-             selected_model = "gemini-2.5-flash"
+            selected_model = "gemini-2.5-flash"
+        elif provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            selected_model = llama_cpp_default_model()
              
         # Prepare all chunks for display
         all_chunks_str = json.dumps(rag.all_chunks, indent=2) if rag.all_chunks else "[]"
@@ -698,12 +707,12 @@ def create_demo_interface():
             status_btn.click(fn=check_system_status, outputs=status_output)
             
         with gr.Row():
-            provider_input = gr.Dropdown(label="Provider", choices=["ollama", "gemini"], value="ollama")
+            provider_input = gr.Dropdown(label="Provider", choices=["ollama", "llama.cpp", "gemini"], value="ollama")
             model_input = gr.Dropdown(
                 label="Model",
                 choices=["qwen3:4b", "qwen3.5:2b"],
                 value="qwen3.5:2b",
-                allow_custom_value=False,
+                allow_custom_value=True,
             )
             think_input = gr.Checkbox(label="Think", value=True)
         
@@ -713,6 +722,15 @@ def create_demo_interface():
                     gr.update(
                         choices=["gemini-2.5-flash"],
                         value="gemini-2.5-flash",
+                    ),
+                    gr.update(value=False, interactive=False),
+                )
+            if provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+                model_name = llama_cpp_default_model()
+                return (
+                    gr.update(
+                        choices=[model_name],
+                        value=model_name,
                     ),
                     gr.update(value=False, interactive=False),
                 )

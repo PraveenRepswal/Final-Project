@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Job Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ec5b13",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221610",
+              "glass": "rgba(255, 255, 255, 0.05)",
+              "glass-border": "rgba(255, 255, 255, 0.1)",
+            },
+            fontFamily: {
+              "display": ["Public Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="font-display bg-black min-h-screen flex flex-col antialiased">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 glass-panel sticky top-0 z-50">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined" style="font-size: 24px;">psychiatry</span>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">AI Job Assistant</h2>
+<span class="text-xs text-cyan-300" id="backendHealthStatus">Checking backend...</span>
+<select class="h-8 rounded-full border border-white/15 bg-white/5 px-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-cyan-400/60" id="providerSelector" title="Model provider">
+<option value="gemini">gemini</option>
+<option value="ollama">ollama</option>
+<option value="llama.cpp">llamacpp</option>
+</select>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Features</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Pricing</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Contact</a>
+</nav>
+<button class="flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold leading-normal tracking-wide">
+<span class="truncate">Sign In</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-4 py-20 lg:py-32 relative overflow-hidden">
+<!-- Abstract Background Orbs -->
+<div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+<div class="max-w-4xl mx-auto text-center z-10 mb-20">
+<h1 class="text-white text-5xl md:text-7xl font-black leading-tight tracking-[-0.03em] mb-6 drop-shadow-lg">
+            One ecosystem. <br class="hidden md:block"/><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">Infinite scale.</span>
+</h1>
+<p class="text-white/70 text-lg md:text-xl font-normal max-w-2xl mx-auto leading-relaxed mb-10">
+            An AI Job Assistant that turns an uploaded resume into actionable career steps: score, chat, search, track, and practice interviews.
+        </p>
+<button class="flex items-center justify-center overflow-hidden rounded-full h-14 px-8 bg-white text-black hover:bg-gray-100 transition-colors text-base font-bold leading-normal tracking-wide mx-auto shadow-[0_0_40px_rgba(255,255,255,0.3)]" id="heroUploadResumeButton" type="button">
+<span class="truncate">Upload Resume</span>
+</button>
+<input accept=".pdf,.doc,.docx" class="hidden" id="heroResumeFileInput" type="file"/>
+<p class="text-xs text-cyan-300 mt-3" id="heroUploadStatus">Choose a resume to parse from this page.</p>
+</div>
+<!-- 5 Column Staggered Grid -->
+<div class="w-full max-w-7xl mx-auto px-4 z-10 pb-20">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-start">
+<!-- Card 1: ATS Scorer -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col h-full hover:-translate-y-2 transition-transform duration-300 lg:mt-12 relative group overflow-hidden">
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="size-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6">
+<span class="material-symbols-outlined text-2xl" data-icon="score">score</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-3">ATS Scorer</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-8 flex-grow">
+                    Get match score, missing keywords, and improvement suggestions.
+                </p>
+<a class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-purple-500/20 text-white text-sm font-medium transition-colors border border-white/10 mt-auto flex items-center justify-center" href="/app/ATS.html" id="goToAtsButton">
+          Calculate Score
+        </a>
+</div>
+<!-- Card 2: Chat with Resume -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col h-full hover:-translate-y-2 transition-transform duration-300 relative group overflow-hidden">
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="size-12 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 mb-6">
+<span class="material-symbols-outlined text-2xl" data-icon="forum">forum</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-3">Chat with Resume</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-8 flex-grow">
+                    Ask questions about skills, experience, strengths, and role fit.
+                </p>
+<a class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-cyan-500/20 text-white text-sm font-medium transition-colors border border-white/10 mt-auto flex items-center justify-center" href="/app/CWR.html" id="goToChatButton">
+          Start Chat
+        </a>
+</div>
+<!-- Card 3: Job Search (Center, slightly higher) -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col h-full hover:-translate-y-2 transition-transform duration-300 lg:-mt-6 relative group overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.05)] border-white/20">
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="size-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-yellow-400 mb-6">
+<span class="material-symbols-outlined text-2xl" data-icon="work">work</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-3">Job Search</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-8 flex-grow">
+                    Search remote roles and rank opportunities by your profile match.
+                </p>
+<a class="w-full py-3 px-4 rounded-xl bg-primary text-white hover:bg-primary/90 text-sm font-bold transition-colors mt-auto shadow-lg shadow-primary/20 flex items-center justify-center" href="/app/JS.html" id="goToJobsButton">
+          Find Jobs
+        </a>
+</div>
+<!-- Card 4: Application Tracker -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col h-full hover:-translate-y-2 transition-transform duration-300 relative group overflow-hidden">
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="size-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6">
+<span class="material-symbols-outlined text-2xl" data-icon="analytics">analytics</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-3">Application Tracker</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-8 flex-grow">
+                    Add, edit, and monitor applications with analytics.
+                </p>
+<a class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-emerald-500/20 text-white text-sm font-medium transition-colors border border-white/10 mt-auto flex items-center justify-center" href="/app/Application%20Tracker.html" id="goToTrackerButton">
+          Open Tracker
+        </a>
+</div>
+<!-- Card 5: Mock Interview -->
+<div class="glass-panel rounded-2xl p-6 flex flex-col h-full hover:-translate-y-2 transition-transform duration-300 lg:mt-12 relative group overflow-hidden">
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="size-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 mb-6">
+<span class="material-symbols-outlined text-2xl" data-icon="video_camera_front">video_camera_front</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-3">Mock Interview</h3>
+<p class="text-white/60 text-sm leading-relaxed mb-8 flex-grow">
+                    Practice Q&amp;A with AI and get performance feedback.
+                </p>
+<a class="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-indigo-500/20 text-white text-sm font-medium transition-colors border border-white/10 mt-auto flex items-center justify-center" href="/app/MI.html" id="goToInterviewButton">
+          Start Interview
+        </a>
+</div>
+</div>
+</div>
+</main>
+<footer class="glass-panel border-t border-white/10 py-10 px-10 text-center relative z-10">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-3 text-white">
+<div class="size-5 text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">psychiatry</span>
+</div>
+<span class="font-bold">AI Job Assistant</span>
+</div>
+<div class="flex flex-wrap justify-center gap-6 text-sm text-white/60">
+<a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-white transition-colors" href="#">Cookie Policy</a>
+</div>
+<div class="text-sm text-white/40">
+            © 2026 Repswal Corporation. All rights reserved.
+        </div>
+</div>
+</footer>
+<script src="/frontend/api-client.js"></script>
+<script>
+  const backendHealthStatus = document.getElementById("backendHealthStatus");
+  const providerSelector = document.getElementById("providerSelector");
+  const heroUploadResumeButton = document.getElementById("heroUploadResumeButton");
+  const heroResumeFileInput = document.getElementById("heroResumeFileInput");
+  const heroUploadStatus = document.getElementById("heroUploadStatus");
+
+  function setHeroUploadStatus(message, isError) {
+    if (!heroUploadStatus) {
+      return;
+    }
+    heroUploadStatus.textContent = message;
+    heroUploadStatus.className = isError ? "text-xs text-red-300 mt-3" : "text-xs text-cyan-300 mt-3";
+  }
+
+  function currentProvider() {
+    if (!providerSelector) {
+      return AIJobAssistantAPI.getProvider();
+    }
+    return providerSelector.value || AIJobAssistantAPI.getProvider();
+  }
+
+  async function parseSelectedResume(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    AIJobAssistantAPI.appendInferenceFields(formData, { provider: currentProvider() });
+
+    setHeroUploadStatus("Parsing resume...", false);
+    if (heroUploadResumeButton) {
+      heroUploadResumeButton.disabled = true;
+    }
+
+    try {
+      const result = await AIJobAssistantAPI.request("/api/v1/resume/parse", {
+        method: "POST",
+        body: formData,
+        isFormData: true,
+      });
+
+      AIJobAssistantAPI.setResumeContext(result.raw_text || "", result.resume_data || {});
+      const suggestedRole = result.suggested_role ? ` Suggested role: ${result.suggested_role}.` : "";
+      setHeroUploadStatus(`Resume parsed successfully.${suggestedRole}`, false);
+    } catch (error) {
+      setHeroUploadStatus(`Resume parse failed: ${error.message}`, true);
+    } finally {
+      if (heroUploadResumeButton) {
+        heroUploadResumeButton.disabled = false;
+      }
+      if (heroResumeFileInput) {
+        heroResumeFileInput.value = "";
+      }
+    }
+  }
+
+  if (heroUploadResumeButton && heroResumeFileInput) {
+    heroUploadResumeButton.addEventListener("click", () => {
+      heroResumeFileInput.click();
+    });
+    heroResumeFileInput.addEventListener("change", async () => {
+      const file = heroResumeFileInput.files && heroResumeFileInput.files[0];
+      if (!file) {
+        return;
+      }
+      await parseSelectedResume(file);
+    });
+  }
+
+  if (providerSelector) {
+    providerSelector.addEventListener("change", () => {
+      AIJobAssistantAPI.setProvider(currentProvider());
+      setHeroUploadStatus(`Provider set to ${currentProvider()}.`, false);
+    });
+  }
+
+  (function initProviderSelector() {
+    if (!providerSelector) {
+      return;
+    }
+    providerSelector.value = AIJobAssistantAPI.getProvider();
+  })();
+
+  (async function checkHealth() {
+    try {
+      await AIJobAssistantAPI.request("/api/v1/system/status");
+      backendHealthStatus.textContent = "Backend online";
+      backendHealthStatus.className = "text-xs text-green-300";
+    } catch (error) {
+      backendHealthStatus.textContent = "Backend unavailable";
+      backendHealthStatus.className = "text-xs text-red-300";
+    }
+  })();
+</script>
+</body></html>

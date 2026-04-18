@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#fb923c", // Orange-400 equivalent for primary
+                        "secondary": "#4ade80", // Green-400 equivalent for secondary
+                        "background-dark": "#000000",
+                        "surface": "rgba(255, 255, 255, 0.03)",
+                        "surface-hover": "rgba(255, 255, 255, 0.06)",
+                        "border-glass": "rgba(255, 255, 255, 0.08)",
+                        "border-glass-hover": "rgba(255, 255, 255, 0.2)",
+                        "text-primary": "#F2F2F2",
+                        "text-muted": "#888888",
+                        "on-secondary": "#003739",
+                        "surface-tint": "#ffb693",
+                        "on-primary": "#561f00",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-surface": "#e2e2e2",
+                        "background": "#000000",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-container": "#006c71",
+                        "surface-container-highest": "#353535",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-surface-variant": "#e2bfb0",
+                        "on-primary-fixed": "#351000",
+                        "on-error": "#690005",
+                        "secondary-container": "#4ade80",
+                        "primary-fixed-dim": "#ffb693",
+                        "on-primary-container": "#572000",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "outline-variant": "#5a4136",
+                        "on-secondary-fixed": "#002021",
+                        "surface-variant": "#353535",
+                        "secondary-fixed-dim": "#00dce5",
+                        "on-tertiary": "#313030",
+                        "error-container": "#93000a",
+                        "surface-dim": "#000000",
+                        "on-tertiary-container": "#313131",
+                        "outline": "#a98a7d",
+                        "inverse-primary": "#a04100",
+                        "on-secondary-fixed-variant": "#004f53",
+                        "tertiary": "#c8c6c5",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "surface-bright": "#393939",
+                        "tertiary-container": "#9a9898",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e2e2e2",
+                        "on-background": "#e2e2e2",
+                        "secondary-fixed": "#63f7ff",
+                        "surface-container": "#1f1f1f",
+                        "primary-fixed": "#ffdbcc",
+                        "surface": "#000000",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-container": "#fb923c",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#303030"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 300ms ease;
+        }
+        .glass-card:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen relative overflow-x-hidden">
+<!-- Ambient Orbs -->
+<div class="orb w-[600px] h-[600px] bg-primary -top-48 -left-48"></div>
+<div class="orb w-[600px] h-[600px] bg-secondary -bottom-48 -right-48"></div>
+<main class="w-full">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-40 bg-black/80 backdrop-blur-md border-b border-white/5 px-8 py-6 flex justify-between items-center max-w-screen-2xl mx-auto">
+<div>
+<h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface">Application Tracker</h2>
+<div class="flex gap-6 mt-4">
+<button class="font-label text-sm font-bold text-primary border-b-2 border-primary pb-1">Manage</button>
+<button class="font-label text-sm text-gray-500 hover:text-gray-200 transition-colors">Analytics</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<input class="bg-white/5 border border-white/10 rounded-full px-6 py-2.5 text-sm w-64 focus:ring-1 focus:ring-primary/50 transition-all outline-none" id="trackerSearchInput" placeholder="Search applications..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-2.5 text-gray-500 text-lg">search</span>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 hover:border-primary/50 transition-colors cursor-pointer">
+<img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqvfTLKvEEbtqk3Zki0-o1lVmhkcdb8jHDeA_E7fRrDmLbGTjU00aXZ6hyBg2XgoIZZl8Wd36nGCnOXB9RrVSx_MT_OmH9fstNifag49PQ6A_2048LJ0qfWZI6rDXLSDl6JqNBlOloEX9_xgMBAVFECJ2TMASsmRa1To5FLFt605U_uPXeWVpWeJCz0A-Vee9Ddb1cLSYZEG9u6hi0NGLNh8ZJgCmMXymRQzuTmUsQpQpI9BhmheT0-GUxrLh_q3-r5l59p1F7sQ"/>
+</div>
+</div>
+</header>
+<section class="p-8 max-w-screen-2xl mx-auto space-y-8">
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-xl flex flex-col gap-2 group">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">description</span>
+<span class="text-xs font-medium text-gray-500">+12% vs last month</span>
+</div>
+<p class="text-gray-400 text-sm font-medium mt-2">Total Applications</p>
+<h3 class="text-3xl font-bold font-headline" id="statTotal">0</h3>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col gap-2 group">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-secondary p-2 bg-secondary/10 rounded-lg">videocam</span>
+<span class="text-xs font-medium text-gray-500">8 scheduled</span>
+</div>
+<p class="text-gray-400 text-sm font-medium mt-2">Interviews</p>
+<h3 class="text-3xl font-bold font-headline" id="statInterviews">0</h3>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col gap-2 group">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-secondary p-2 bg-secondary/10 rounded-lg">emoji_events</span>
+<span class="text-xs font-medium text-secondary/80">3 Active Offers</span>
+</div>
+<p class="text-gray-400 text-sm font-medium mt-2">Offers</p>
+<h3 class="text-3xl font-bold font-headline" id="statOffers">0</h3>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col gap-2 group">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-error p-2 bg-error/10 rounded-lg">cancel</span>
+<span class="text-xs font-medium text-gray-500">Market average</span>
+</div>
+<p class="text-gray-400 text-sm font-medium mt-2">Rejections</p>
+<h3 class="text-3xl font-bold font-headline" id="statRejections">0</h3>
+</div>
+</div>
+<!-- Main Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Application Table -->
+<div class="lg:col-span-2 space-y-4">
+<div class="flex justify-between items-center px-2">
+<h4 class="font-headline font-bold text-xl">Recent Submissions</h4>
+<button class="text-sm text-secondary hover:underline transition-all" id="exportCsvButton" type="button">Export CSV</button>
+</div>
+<div class="glass-card rounded-2xl overflow-hidden border-white/5">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5 border-b border-white/5">
+<th class="px-6 py-4 font-label text-xs uppercase tracking-wider text-gray-500">#</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-wider text-gray-500">Role &amp; Company</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-wider text-gray-500">Status</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-wider text-gray-500">Date Applied</th>
+<th class="px-6 py-4 font-label text-xs uppercase tracking-wider text-gray-500">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5" id="applicationsTableBody">
+<tr>
+<td class="px-6 py-4 text-sm text-gray-400" colspan="5">No applications loaded yet.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Add Application Sidebar -->
+<div class="space-y-4">
+<h4 class="font-headline font-bold text-xl px-2">Log New Activity</h4>
+<div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+<form class="space-y-5" id="applicationForm">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Job Title</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/50 transition-all outline-none" id="jobTitleInput" placeholder="e.g. Lead Engineer" required="" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Company</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/50 transition-all outline-none" id="companyInput" placeholder="e.g. OpenAI" required="" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Type</label>
+<select class="w-full bg-[#1b1b1b] border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/50 outline-none text-gray-400 appearance-none" id="roleTypeInput">
+<option>Full-time</option>
+<option>Contract</option>
+<option>Freelance</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Status</label>
+<select class="w-full bg-[#1b1b1b] border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/50 outline-none text-gray-400 appearance-none" id="statusInput">
+<option>Applied</option>
+<option>Interview</option>
+<option>Offer</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-widest">Job URL</label>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary/50 transition-all outline-none" id="jobUrlInput" placeholder="https://jobs.company.com/..." type="url"/>
+</div>
+<button class="w-full bg-primary-container text-on-primary-fixed py-4 rounded-xl font-bold font-headline tracking-tight hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2" id="saveApplicationButton" type="submit">
+<span class="material-symbols-outlined text-xl">add_task</span>
+                                Save Application
+                            </button>
+<p class="text-xs text-cyan-300" id="trackerStatus">Ready.</p>
+</form>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Contextual FAB (Mobile Only) -->
+<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary rounded-full shadow-2xl flex items-center justify-center text-white z-50">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script src="/frontend/api-client.js"></script>
+<script>
+    const trackerSearchInput = document.getElementById("trackerSearchInput");
+    const applicationsTableBody = document.getElementById("applicationsTableBody");
+    const statTotal = document.getElementById("statTotal");
+    const statInterviews = document.getElementById("statInterviews");
+    const statOffers = document.getElementById("statOffers");
+    const statRejections = document.getElementById("statRejections");
+    const applicationForm = document.getElementById("applicationForm");
+    const jobTitleInput = document.getElementById("jobTitleInput");
+    const companyInput = document.getElementById("companyInput");
+    const roleTypeInput = document.getElementById("roleTypeInput");
+    const statusInput = document.getElementById("statusInput");
+    const jobUrlInput = document.getElementById("jobUrlInput");
+    const saveApplicationButton = document.getElementById("saveApplicationButton");
+    const trackerStatus = document.getElementById("trackerStatus");
+    const exportCsvButton = document.getElementById("exportCsvButton");
+
+    let applications = [];
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function setStatus(message, isError) {
+        trackerStatus.textContent = message;
+        trackerStatus.className = isError ? "text-xs text-red-300" : "text-xs text-cyan-300";
+    }
+
+    function badgeClass(status) {
+        if (status === "Offered") {
+            return "bg-secondary/20 text-secondary";
+        }
+        if (status === "Rejected" || status === "Withdrawn") {
+            return "bg-error/20 text-error";
+        }
+        if (status === "Awaiting Interview" || status === "Interviewed") {
+            return "bg-primary/20 text-primary";
+        }
+        return "bg-white/10 text-gray-300";
+    }
+
+    function filteredApplications() {
+        const q = trackerSearchInput.value.trim().toLowerCase();
+        if (!q) {
+            return applications;
+        }
+        return applications.filter((item) => {
+            return (
+                (item.job_title || "").toLowerCase().includes(q) ||
+                (item.company || "").toLowerCase().includes(q) ||
+                (item.status || "").toLowerCase().includes(q)
+            );
+        });
+    }
+
+    function renderTable() {
+        const rows = filteredApplications();
+        if (!rows.length) {
+            applicationsTableBody.innerHTML = '<tr><td class="px-6 py-4 text-sm text-gray-400" colspan="5">No applications match this filter.</td></tr>';
+            return;
+        }
+
+        applicationsTableBody.innerHTML = rows
+            .map((item, index) => {
+                const dateApplied = item.application_date || "-";
+                    const normalizedUrl = String(item.job_url || "").trim();
+                    const safeUrl = normalizedUrl
+                        ? /^https?:\/\//i.test(normalizedUrl)
+                            ? normalizedUrl
+                            : `https://${normalizedUrl}`
+                        : "";
+                const safeJobTitle = escapeHtml(item.job_title || "-");
+                const safeCompany = escapeHtml(item.company || "-");
+                const safeRoleType = escapeHtml(item.role_type || "-");
+                const safeStatus = escapeHtml(item.status || "Applied");
+                const safeDateApplied = escapeHtml(dateApplied);
+                const safeId = escapeHtml(item.id || "");
+                const safeApplyUrl = escapeHtml(safeUrl);
+                return `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="px-6 py-4 text-sm text-gray-500">${String(index + 1).padStart(2, "0")}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-on-surface">${safeJobTitle}</span>
+                                <span class="text-xs text-gray-500">${safeCompany} • ${safeRoleType}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${badgeClass(item.status)}">${safeStatus}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-400">${safeDateApplied}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex gap-3">
+                                    ${safeUrl ? `<a class="text-gray-500 hover:text-secondary transition-colors" href="${safeApplyUrl}" rel="noopener noreferrer" target="_blank" title="Open company link"><span class="material-symbols-outlined text-lg">open_in_new</span></a>` : ""}
+                                <button class="text-gray-500 hover:text-error transition-colors delete-app-btn" data-id="${safeId}" title="Delete">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+            })
+            .join("");
+    }
+
+    async function loadStats() {
+        const stats = await AIJobAssistantAPI.request("/api/v1/tracker/stats");
+        statTotal.textContent = String(stats.total || 0);
+        statInterviews.textContent = String(stats.interviews || 0);
+        statOffers.textContent = String(stats.offers || 0);
+        statRejections.textContent = String(stats.rejections || 0);
+    }
+
+    async function loadApplications() {
+        applications = await AIJobAssistantAPI.request("/api/v1/tracker/applications");
+        renderTable();
+    }
+
+    async function loadReferenceData() {
+        const statusesResult = await AIJobAssistantAPI.request("/api/v1/tracker/reference/statuses");
+        const rolesResult = await AIJobAssistantAPI.request("/api/v1/tracker/reference/role-types");
+        const statuses = statusesResult.statuses || [];
+        const roleTypes = rolesResult.role_types || [];
+
+        statusInput.innerHTML = statuses.map((status) => `<option>${escapeHtml(status)}</option>`).join("");
+        roleTypeInput.innerHTML = roleTypes.map((roleType) => `<option>${escapeHtml(roleType)}</option>`).join("");
+    }
+
+    async function refreshAll() {
+        await Promise.all([loadApplications(), loadStats()]);
+    }
+
+    applicationForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {
+            job_title: jobTitleInput.value.trim(),
+            company: companyInput.value.trim(),
+            role_type: roleTypeInput.value,
+            status: statusInput.value,
+            job_url: jobUrlInput.value.trim() || null,
+        };
+
+        if (!payload.job_title || !payload.company) {
+            setStatus("Job title and company are required.", true);
+            return;
+        }
+
+        try {
+            saveApplicationButton.disabled = true;
+            setStatus("Saving application...", false);
+            await AIJobAssistantAPI.request("/api/v1/tracker/applications", {
+                method: "POST",
+                body: payload,
+            });
+            applicationForm.reset();
+            await refreshAll();
+            setStatus("Application saved.", false);
+        } catch (error) {
+            setStatus(`Save failed: ${error.message}`, true);
+        } finally {
+            saveApplicationButton.disabled = false;
+        }
+    });
+
+    applicationsTableBody.addEventListener("click", async (event) => {
+        const target = event.target.closest(".delete-app-btn");
+        if (!target) {
+            return;
+        }
+
+        const appId = target.getAttribute("data-id");
+        if (!appId) {
+            return;
+        }
+
+        try {
+            await AIJobAssistantAPI.request(`/api/v1/tracker/applications/${appId}`, {
+                method: "DELETE",
+            });
+            await refreshAll();
+            setStatus("Application deleted.", false);
+        } catch (error) {
+            setStatus(`Delete failed: ${error.message}`, true);
+        }
+    });
+
+    trackerSearchInput.addEventListener("input", renderTable);
+
+    exportCsvButton.addEventListener("click", () => {
+        if (!applications.length) {
+            setStatus("No data to export.", true);
+            return;
+        }
+
+        const header = ["job_title", "company", "role_type", "status", "application_date", "job_url", "notes"];
+        const rows = applications.map((item) =>
+            header
+                .map((key) => {
+                    const value = String(item[key] || "");
+                    return `"${value.replace(/\"/g, '""')}"`;
+                })
+                .join(",")
+        );
+        const csv = [header.join(","), ...rows].join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "applications.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        setStatus("CSV exported.", false);
+    });
+
+    (async function init() {
+        try {
+            await loadReferenceData();
+            await refreshAll();
+            setStatus("Tracker connected to backend.", false);
+        } catch (error) {
+            setStatus(`Failed to load tracker data: ${error.message}`, true);
+        }
+    })();
+</script>
+</body></html>

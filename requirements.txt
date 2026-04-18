@@ -26,7 +26,7 @@ filelock==3.20.3
 frozenlist==1.8.0
 fsspec==2026.1.0
 google-ai-generativelanguage==0.6.15
-google-api-core==2.29.0
+google-api-core==2.25.2
 google-api-python-client==2.188.0
 google-auth==2.49.0.dev0
 google-auth-httplib2==0.3.0
@@ -84,7 +84,7 @@ mypy_extensions==1.1.0
 narwhals==2.15.0
 networkx==3.6.1
 numba==0.63.1
-numpy==2.3.2
+numpy==2.3.3
 ollama==0.6.1
 openai-whisper==20250625
 orjson==3.11.6
@@ -101,7 +101,7 @@ pooch==1.9.0
 portalocker==3.2.0
 propcache==0.4.1
 proto-plus==1.27.0
-protobuf==5.29.5
+protobuf==5.29.6
 pyasn1==0.6.2
 pyasn1_modules==0.4.2
 pycparser==3.0
@@ -145,12 +145,12 @@ tabulate==0.9.0
 tenacity==9.1.2
 threadpoolctl==3.6.0
 tiktoken==0.12.0
-tokenizers==0.20.3
+tokenizers==0.22.2
 tomlkit==0.13.3
-torch==2.10.0
-torchvision==0.25.0
+torch==2.11.0
+torchvision==0.26.0
 tqdm==4.67.2
-transformers==4.46.3
+transformers==4.57.6
 typer==0.21.1
 typer-slim==0.21.1
 typing-inspect==0.9.0

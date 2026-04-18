@@ -9,10 +9,48 @@ from dataclasses import dataclass, asdict
 
 from google import genai
 from google.genai import types
-from backend.common.models import ResumeData
+from functions.common.models import ResumeData
+from functions.common.llama_cpp_client import chat_completion
 
 logger = logging.getLogger(__name__)
 OLLAMA_NUM_GPU = int(os.getenv("OLLAMA_NUM_GPU", "-1"))
+
+
+ATS_RESPONSE_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "breakdown": {
+            "type": "object",
+            "properties": {
+                "Keywords": {"type": "number", "minimum": 0, "maximum": 40},
+                "Skills": {"type": "number", "minimum": 0, "maximum": 30},
+                "Formatting": {"type": "number", "minimum": 0, "maximum": 10},
+                "Education": {"type": "number", "minimum": 0, "maximum": 10},
+                "Experience": {"type": "number", "minimum": 0, "maximum": 10},
+            },
+            "required": ["Keywords", "Skills", "Formatting", "Education", "Experience"],
+            "additionalProperties": False,
+        },
+        "missing_keywords": {"type": "array", "items": {"type": "string"}},
+        "formatting_issues": {"type": "array", "items": {"type": "string"}},
+        "suggestions": {"type": "array", "items": {"type": "string"}},
+        "reasoning": {"type": "string"},
+    },
+    "required": [
+        "score",
+        "breakdown",
+        "missing_keywords",
+        "formatting_issues",
+        "suggestions",
+        "reasoning",
+    ],
+    "additionalProperties": False,
+}
+
+
+def _is_llama_cpp_provider(provider: str) -> bool:
+    return provider in {"llama.cpp", "llama_cpp", "llamacpp"}
 
 
 @dataclass
@@ -112,6 +150,17 @@ class ATSScorer:
                 )
             )
             response_json_str = response.text
+        elif _is_llama_cpp_provider(self.provider):
+            response_json_str = chat_completion(
+                prompt=prompt,
+                model=self.model,
+                temperature=0.1,
+                max_tokens=2048,
+                json_mode=True,
+                json_schema=ATS_RESPONSE_SCHEMA,
+                timeout=180,
+                max_retries=3,
+            )
             
         else: # ollama
             payload = {
@@ -120,7 +169,7 @@ class ATSScorer:
                 'stream': False,
                 'think': self.think,
                 'options': {'temperature': 0.2, 'num_predict': 4096, 'num_gpu': OLLAMA_NUM_GPU},
-                'format': 'json'
+                'format': ATS_RESPONSE_SCHEMA
             }
             response = requests.post('http://localhost:11434/api/chat', json=payload)
             response.raise_for_status()
@@ -242,7 +291,8 @@ class ATSScorer:
     def _extract_keywords_from_jd_heuristic(self, jd: str) -> List[str]:
         """Simple keyword extraction for fallback."""
         try:
-             if self.provider == "gemini": return [] 
+             if self.provider == "gemini" or _is_llama_cpp_provider(self.provider):
+                 return [] 
              
              prompt = f"Extract 5 technical keywords from: {jd[:500]}. Return JSON list."
              resp = requests.post('http://localhost:11434/api/chat', json={

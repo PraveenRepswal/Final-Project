@@ -3,11 +3,13 @@
 import logging
 from pathlib import Path
 from typing import Optional
-from backend.common.models import ResumeData
+from functions.common.models import ResumeData
 
 from .text_extractor import extract_text
 from .ai_extractor import extract_resume_data, check_ollama_connection, get_last_model_debug_output
 from .ai_extractor_gemini import extract_resume_data_gemini
+from .ai_extractor_llamacpp import extract_resume_data_llama_cpp
+from functions.common.llama_cpp_client import is_llama_cpp_available
 
 
 logger = logging.getLogger(__name__)
@@ -50,6 +52,11 @@ class ResumeParser:
             if not os.getenv("GEMINI_API_KEY"):
                 logger.warning(
                     "GEMINI_API_KEY is not set. Gemini extraction will fail."
+                )
+        elif self.provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            if not is_llama_cpp_available():
+                logger.warning(
+                    "llama.cpp server not reachable. Start llama_cpp.server and verify LLAMA_CPP_BASE_URL."
                 )
     
     def get_debug_info(self) -> str:
@@ -97,6 +104,10 @@ class ResumeParser:
         try:
             if self.provider == "gemini":
                 resume_data, raw_response = extract_resume_data_gemini(
+                    text, model=self.model, return_debug=True
+                )
+            elif self.provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+                resume_data, raw_response = extract_resume_data_llama_cpp(
                     text, model=self.model, return_debug=True
                 )
             else:
@@ -166,6 +177,9 @@ Error: {str(e)}
         """
         if self.provider == "gemini":
             result, _ = extract_resume_data_gemini(text, model=self.model, return_debug=True)
+            return result
+        if self.provider in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            result, _ = extract_resume_data_llama_cpp(text, model=self.model, return_debug=True)
             return result
         result, _ = extract_resume_data(text, model=self.model, return_debug=True, think=self.think)
         return result

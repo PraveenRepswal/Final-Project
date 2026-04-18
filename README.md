@@ -8,7 +8,7 @@ AI-powered job assistance platform for resume analysis, job search, and AI mock 
 
 ### 1. Resume Parsing
 - 📄 **Upload PDF/DOCX resumes**
-- 🤖 **AI-Powered Extraction** - Uses Ollama with **qwen3.5:2b** for intelligent parsing
+- 🤖 **AI-Powered Extraction** - Supports **Ollama**, **llama.cpp**, and Gemini for intelligent parsing
 - 📊 **Structured Data**: Extracts detailed Contact Info, Education, Experience, Projects, and Skills.
 - 🛠️ **Debug Info**: View raw model output, thought process, and parsed JSON.
 
@@ -67,6 +67,21 @@ AI-powered job assistance platform for resume analysis, job search, and AI mock 
    Create a `.env` file and add:
    ```env
    GEMINI_API_KEY=your_key_here
+   ```
+
+6. **(Optional) Setup llama.cpp server**:
+   Install and run llama.cpp OpenAI-compatible server:
+   ```bash
+   pip install "llama-cpp-python[server]"
+   python -m llama_cpp.server --model path/to/model.gguf --host 127.0.0.1 --port 8000
+   ```
+
+   Add to `.env` when using a custom endpoint/model:
+   ```env
+   LLAMA_CPP_BASE_URL=http://127.0.0.1:8000
+   LLAMA_CPP_MODEL=local-model
+   # Optional if your proxy/server requires auth
+   LLAMA_CPP_API_KEY=
    ```
 
 ## Usage

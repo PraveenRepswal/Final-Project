@@ -10,7 +10,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from backend.common.models import ResumeData
+from functions.common.models import ResumeData
 
 logger = logging.getLogger(__name__)
 OLLAMA_NUM_GPU = int(os.getenv("OLLAMA_NUM_GPU", "-1"))
@@ -20,7 +20,7 @@ _last_thinking = ""
 _last_content = ""
 
 
-def query_ollama(prompt: str, model: str = 'qwen3.5:2b', stream: bool = False, think: bool = True, json_mode: bool = True) -> tuple[str, str]:
+def query_ollama(prompt: str, model: str = 'qwen3.5:2b', stream: bool = False, think: bool = False, json_mode: bool = True) -> tuple[str, str]:
     """Send prompt to local Ollama and return response text using /api/chat."""
     global _last_content, _last_thinking
     try:
@@ -111,7 +111,7 @@ def query_ollama(prompt: str, model: str = 'qwen3.5:2b', stream: bool = False, t
         raise ConnectionError(f"Failed to connect to Ollama: {str(e)}")
 
 
-def stream_ollama_response(prompt: str, model: str = "qwen3.5:2b", think: bool = True) -> Generator[tuple[str, str], None, None]:
+def stream_ollama_response(prompt: str, model: str = "qwen3.5:2b", think: bool = False) -> Generator[tuple[str, str], None, None]:
     """Stream Ollama response and yield (content_so_far, thinking_so_far)."""
     payload = {
         'model': model,
@@ -182,7 +182,7 @@ def _build_langchain_chain(model: str = "qwen3.5:2b"):
         temperature=0.1,
         format="json",
         options={"num_predict": 8192, "num_gpu": OLLAMA_NUM_GPU},
-        model_kwargs={"think": True}
+        model_kwargs={"think": False}
     )
 
     chain = prompt | llm | StrOutputParser()
@@ -241,7 +241,7 @@ def extract_resume_data(
     use_structured_output: bool = True,
     return_debug: bool = False,
     stream: bool = False,
-    think: bool = True,
+    think: bool = False,
 ) -> Optional[ResumeData]:
     """
     Extract structured resume data from text using Ollama AI.
@@ -344,8 +344,8 @@ def _fix_project_experience_swap(data_dict: dict) -> dict:
             elif has_job_words:
                 likely_jobs.append(exp)
             else:
-                # Default: if no company name visible, treat as project
-                likely_projects.append(exp)
+                # Keep ambiguous entries in experience to avoid false project promotion.
+                likely_jobs.append(exp)
         
         if likely_projects:
             logger.warning(f"Auto-swapping {len(likely_projects)} items from experience to projects")
@@ -578,13 +578,6 @@ def _merge_with_heuristics(data_dict: dict, heuristic: dict) -> dict:
 
         if not model_list and heuristic_list:
             data_dict[field] = heuristic_list
-        elif heuristic_list and len(model_list) < len(heuristic_list):
-            # Merge unique items preserving order
-            merged = model_list[:]
-            for item in heuristic_list:
-                if item not in merged:
-                    merged.append(item)
-            data_dict[field] = merged
 
     return data_dict
 
@@ -721,10 +714,13 @@ def parse_resume_data_from_response(text: str, content: str) -> ResumeData:
     data_dict = _normalize_model_output_schema(data_dict)
     data_dict = _clean_all_fields(data_dict)
 
-    # NOTE: Helper fixes are temporarily disabled as requested.
-    # data_dict = _fix_project_experience_swap(data_dict)
-    # heuristic = _heuristic_extract_from_text(text)
-    # data_dict = _merge_with_heuristics(data_dict, heuristic)
+    # Apply post-processing helpers conservatively to avoid overriding strong model output.
+    try:
+        data_dict = _fix_project_experience_swap(data_dict)
+        heuristic = _heuristic_extract_from_text(text)
+        data_dict = _merge_with_heuristics(data_dict, heuristic)
+    except Exception as helper_err:
+        logger.warning(f"Helper post-processing skipped due to error: {helper_err}")
 
     # Validate and create ResumeData object
     try:
@@ -740,80 +736,76 @@ def parse_resume_data_from_response(text: str, content: str) -> ResumeData:
         return ResumeData(**valid_fields)
 
 
+def _strip_think_sections(response_text: str) -> str:
+    """Remove model reasoning sections wrapped in <think> tags."""
+    if not response_text:
+        return ""
+    cleaned = re.sub(r"<think\b[^>]*>.*?</think>", "", response_text, flags=re.DOTALL | re.IGNORECASE)
+    cleaned = re.sub(r"<think\b[^>]*>.*$", "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    cleaned = re.sub(r"</think>", "", cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
+
+
+def _try_extract_json_object(response_text: str) -> dict | None:
+    """Scan text for the first valid JSON object and return it when found."""
+    decoder = json.JSONDecoder()
+
+    for idx, ch in enumerate(response_text):
+        if ch not in "{[":
+            continue
+        try:
+            candidate, _ = decoder.raw_decode(response_text[idx:])
+        except json.JSONDecodeError:
+            continue
+
+        if isinstance(candidate, dict):
+            return candidate
+        if isinstance(candidate, list) and candidate and isinstance(candidate[0], dict):
+            return candidate[0]
+
+    return None
+
+
 def _parse_json_from_response(response_text: str) -> dict:
     """Extract JSON from LLM response (handles reasoning text, code blocks, and plain JSON)"""
     if not response_text:
         raise ValueError("Empty response from model")
-    
-    # First try: direct parse (unlikely but worth trying)
-    try:
-        return json.loads(response_text.strip())
-    except json.JSONDecodeError:
-        pass
-    
-    # Second try: extract JSON between triple backticks
-    try:
-        match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
+
+    cleaned_text = _strip_think_sections(response_text)
+    candidates = [response_text.strip()]
+    if cleaned_text and cleaned_text not in candidates:
+        candidates.append(cleaned_text)
+
+    for candidate_text in candidates:
+        # 1) Try direct parse first.
+        try:
+            parsed = json.loads(candidate_text)
+            if isinstance(parsed, dict):
+                return parsed
+            if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
+                return parsed[0]
+        except json.JSONDecodeError:
+            pass
+
+        # 2) Try fenced JSON blocks.
+        match = re.search(r"```(?:json)?\s*(\{.*?\}|\[.*?\])\s*```", candidate_text, re.DOTALL | re.IGNORECASE)
         if match:
-            return json.loads(match.group(1))
-    except json.JSONDecodeError:
-        pass
-    
-    # Third try: find JSON object in the text (skip reasoning text)
-    # Look for the pattern that starts a JSON object
-    try:
-        # Find all { positions and try to parse from each one
-        start_positions = [i for i, c in enumerate(response_text) if c == '{']
-        
-        for start in start_positions:
-            # Find matching closing brace
-            brace_count = 0
-            end = start
-            for i in range(start, len(response_text)):
-                if response_text[i] == '{':
-                    brace_count += 1
-                elif response_text[i] == '}':
-                    brace_count -= 1
-                    if brace_count == 0:
-                        end = i + 1
-                        break
-            
-            json_str = response_text[start:end]
             try:
-                result = json.loads(json_str)
-                logger.info("Extracted JSON from boundaries")
-                return result
+                parsed = json.loads(match.group(1))
+                if isinstance(parsed, dict):
+                    return parsed
+                if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
+                    return parsed[0]
             except json.JSONDecodeError:
-                continue
-        
-    except Exception as e:
-        logger.warning(f"JSON extraction attempt failed: {e}")
-    
-    # Final attempt: use regex to find JSON-like pattern
-    try:
-        pattern = r'\{\s*"name"\s*:'  # Look for JSON starting with "name" field
-        match = re.search(pattern, response_text)
-        if match:
-            start = match.start()
-            # Find the matching closing brace
-            brace_count = 0
-            end = start
-            for i in range(start, len(response_text)):
-                if response_text[i] == '{':
-                    brace_count += 1
-                elif response_text[i] == '}':
-                    brace_count -= 1
-                    if brace_count == 0:
-                        end = i + 1
-                        break
-            json_str = response_text[start:end]
-            return json.loads(json_str)
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse JSON: {e}")
-        logger.error(f"Response: {response_text[:500]}")
-        raise ValueError(f"Failed to parse AI response as JSON: {str(e)}")
-    
-    raise ValueError("Could not find valid JSON in response")
+                pass
+
+        # 3) Scan text for embedded JSON object.
+        embedded = _try_extract_json_object(candidate_text)
+        if embedded is not None:
+            return embedded
+
+    preview = response_text[:500].replace("\n", " ")
+    raise ValueError(f"Could not find valid JSON in response. Preview: {preview}")
 
 
 def check_ollama_connection(model: str = "qwen3.5:2b") -> bool:

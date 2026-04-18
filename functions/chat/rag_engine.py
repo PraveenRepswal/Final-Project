@@ -9,27 +9,15 @@ import logging
 import json
 import requests
 from typing import List, Dict, Any, Generator, Tuple
+from functions.common.llama_cpp_client import stream_chat_completion
 
 # Vector Store & Embeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
-# Use new langchain_huggingface if available
-try:
-    from langchain_huggingface import HuggingFaceEmbeddings
-except ImportError:
-    from langchain_community.embeddings import HuggingFaceEmbeddings
-
-# Modern LangChain imports
-try:
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
-except ImportError:
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-try:
-    from langchain_core.documents import Document
-except ImportError:
-    from langchain.docstore.document import Document
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 
 # New Google GenAI SDK
 from google import genai
@@ -38,6 +26,10 @@ from google.genai import types
 logger = logging.getLogger(__name__)
 OLLAMA_NUM_GPU = int(os.getenv("OLLAMA_NUM_GPU", "-1"))
 
+
+def _is_llama_cpp_provider(provider: str) -> bool:
+    return provider in {"llama.cpp", "llama_cpp", "llamacpp"}
+
 class RAGEngine:
     """
     Manages vector storage and retrieval for Resume RAG.
@@ -45,7 +37,6 @@ class RAGEngine:
     def __init__(self, collection_name: str = "resume_chat"):
         self.collection_name = collection_name
         self.embedding_model = None
-        self.vector_store = None
         self.vector_store = None
         self.client = None
         self.all_chunks = []
@@ -129,6 +120,8 @@ class RAGEngine:
         # 2. Generate (Stream)
         if provider == "gemini":
             stream = self._stream_gemini(prompt, model)
+        elif _is_llama_cpp_provider(provider):
+            stream = self._stream_llama_cpp(prompt, model)
         else:
             stream = self._stream_ollama(prompt, model, think=think)
             
@@ -179,5 +172,18 @@ class RAGEngine:
                 if chunk.text:
                     buffer += chunk.text
                     yield "", buffer
+        except Exception as e:
+            yield "", f"Error: {e}"
+
+    def _stream_llama_cpp(self, prompt: str, model: str) -> Generator[Tuple[str, str], None, None]:
+        try:
+            for buffer in stream_chat_completion(
+                prompt=prompt,
+                model=model,
+                temperature=0.3,
+                max_tokens=1024,
+                timeout=120,
+            ):
+                yield "", buffer
         except Exception as e:
             yield "", f"Error: {e}"

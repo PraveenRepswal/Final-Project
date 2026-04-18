@@ -19,6 +19,15 @@ env/
 
 # Environment Variables
 .env
+.env.*
+!.env.example
+
+# Private keys and cert bundles
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
 
 # Logs and Debug Output
 *.log
@@ -36,6 +45,7 @@ temp_audio/
 *.wav
 *.mp3
 *.webm
+Outcome_results/
 gradio_cached_examples/
 flagged/
 data/

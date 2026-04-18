@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Job Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .glass-input {
+            background: rgba(14, 14, 14, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body {
+            background-color: #000000;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "on-secondary-container": "#002021",
+                        "primary-fixed-dim": "#ffb693",
+                        "secondary-fixed-dim": "#22d3ee", /* Cyan-400 equivalent */
+                        "surface-variant": "#353535",
+                        "on-secondary-fixed-variant": "#0891b2", /* Cyan-600 */
+                        "secondary-fixed": "#06b6d4", /* Cyan-500 */
+                        "inverse-primary": "#f97316", /* Orange-500 */
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "tertiary": "#c8c6c5",
+                        "on-tertiary": "#313030",
+                        "primary-fixed": "#ffdbcc",
+                        "primary-container": "#f97316", /* Orange Primary Accent */
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-secondary-fixed": "#002021",
+                        "on-primary-container": "#ffffff",
+                        "background": "#000000",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#9a9898",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface-variant": "#a1a1aa",
+                        "on-surface": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#22d3ee", /* Cyan Accent */
+                        "error": "#ffb4ab",
+                        "surface-container": "#1f1f1f",
+                        "error-container": "#93000a",
+                        "on-secondary": "#003739",
+                        "outline": "#4b5563",
+                        "surface": "#000000",
+                        "outline-variant": "#3f3f46",
+                        "surface-container-highest": "#353535",
+                        "inverse-surface": "#e2e2e2",
+                        "surface-tint": "#22d3ee",
+                        "on-tertiary-container": "#313131",
+                        "primary": "#f97316", /* Orange */
+                        "inverse-on-surface": "#303030",
+                        "secondary": "#22d3ee", /* Cyan */
+                        "surface-bright": "#393939",
+                        "on-primary-fixed": "#ffffff",
+                        "surface-container-lowest": "#000000",
+                        "surface-dim": "#000000",
+                        "on-background": "#e2e2e2",
+                        "surface-container-low": "#1b1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body text-on-surface bg-background min-h-screen flex flex-col overflow-x-hidden">
+<!-- Background Orbs -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary-fixed-dim/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[150px]"></div>
+<div class="absolute top-[20%] right-[15%] w-[30%] h-[30%] bg-secondary-container/5 rounded-full blur-[100px]"></div>
+</div>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-[24px] border-b border-white/5">
+<nav class="flex justify-between items-center px-12 py-5 w-full max-w-screen-2xl mx-auto">
+<div class="text-xl font-bold tracking-tight text-secondary-fixed-dim font-['Space_Grotesk']">
+            AI Job Assistant
+        </div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-zinc-400 hover:text-secondary-fixed-dim active:scale-95 transition-all" data-icon="account_circle">account_circle</button>
+</div>
+</nav>
+</header>
+<main class="flex-grow flex items-center justify-center px-6 pt-32 pb-12 relative z-10">
+<div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Panel: Context/Resume Info -->
+<div class="lg:col-span-4 space-y-6">
+<div class="space-y-2">
+<h1 class="font-headline text-5xl font-bold tracking-tighter leading-none text-secondary-fixed-dim">Resume<br/>Intelligence</h1>
+<p class="text-on-surface-variant text-sm font-medium tracking-wide py-4">Surgical analysis of your professional trajectory through the lens of Synthetic Intelligence.</p>
+<p class="text-xs text-cyan-300" id="chatStatus">Upload a resume, then ask questions.</p>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed-dim/20 flex items-center justify-center text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+</div>
+<div>
+<p class="text-[10px] text-secondary-fixed-dim uppercase tracking-widest font-bold">Loaded Context</p>
+<p class="text-on-surface font-semibold text-sm" id="loadedResumeName">No resume loaded</p>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-3 mb-4" id="chatResumeUploadControls">
+<input accept=".pdf,.doc,.docx" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-gray-200" id="chatResumeFile" type="file"/>
+<button class="px-4 py-3 bg-cyan-600/80 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all duration-300" id="chatParseResumeButton" type="button">Parse Resume for Chat</button>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-xs">
+<span class="text-zinc-400 uppercase tracking-wider">Match Confidence</span>
+<span class="px-3 py-1 rounded-full bg-secondary-fixed-dim/10 text-secondary-fixed-dim font-black shadow-[0_0_15px_rgba(0,220,229,0.1)]" id="chatConfidenceLabel">--</span>
+</div>
+<div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-secondary-fixed-dim to-secondary-container w-[1%] h-full" id="chatConfidenceBar"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Central Chat Container -->
+<div class="lg:col-span-8 flex flex-col h-[700px] glass-panel rounded-2xl border border-white/10 shadow-2xl overflow-hidden relative">
+<!-- Chat Header -->
+<div class="px-8 py-6 flex justify-between items-center border-b border-white/5 bg-white/5">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-secondary-fixed-dim to-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-cyan-400 rounded-full border-2 border-black"></div>
+</div>
+<div>
+<h3 class="text-on-surface font-bold font-headline leading-none">AI Assistant</h3>
+</div>
+</div>
+</div>
+<!-- Messages Area -->
+<div class="flex-grow overflow-y-auto p-8 space-y-8 flex flex-col" id="chatMessages">
+<div class="flex gap-4 max-w-[85%] self-start">
+<div class="flex-shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[18px]" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="space-y-2">
+<div class="bg-surface-container-low text-on-surface p-5 rounded-2xl rounded-tl-none border border-white/5 text-sm leading-relaxed">
+                            Resume-aware chat is ready. Upload a resume file, then ask a question.
+                        </div>
+</div>
+</div>
+</div>
+<!-- Input Footer -->
+<div class="p-8 pt-0">
+<div class="glass-input p-2 rounded-full flex items-center gap-2 border border-white/10 group focus-within:border-secondary-fixed-dim/30 transition-all duration-300">
+<button class="w-10 h-10 flex items-center justify-center text-zinc-500 hover:text-secondary-fixed-dim transition-colors">
+<span class="material-symbols-outlined" data-icon="attach_file">attach_file</span>
+</button>
+<input class="bg-transparent border-none focus:ring-0 flex-grow text-sm text-on-surface placeholder-zinc-500 px-2 font-body" id="chatMessageInput" placeholder="Ask about specific skills, role fit, or resume edits..." type="text"/>
+<button class="bg-primary-container text-white w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg" id="sendChatButton" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="flex justify-center gap-6 mt-4">
+<button class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-secondary-fixed-dim transition-colors">Analyze Keywords</button>
+<button class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-secondary-fixed-dim transition-colors">Compare with Job Descr.</button>
+<button class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 hover:text-secondary-fixed-dim transition-colors">Suggest Edits</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 mt-auto bg-black border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center px-12 z-10">
+<div class="text-sm font-black text-zinc-500 font-['Manrope'] mb-6 md:mb-0 uppercase tracking-wider">
+        © 2026 Repswal Corporation. ALL RIGHTS RESERVED.
+    </div>
+<div class="flex gap-8 font-['Manrope'] text-xs tracking-widest uppercase">
+<a class="text-zinc-500 hover:text-secondary-fixed-dim transition-colors" href="#">Privacy Policy</a>
+<a class="text-zinc-500 hover:text-secondary-fixed-dim transition-colors" href="#">Terms of Service</a>
+<a class="text-zinc-500 hover:text-secondary-fixed-dim transition-colors" href="#">AI Ethics</a>
+<a class="text-secondary-fixed-dim hover:text-cyan-300 transition-colors" href="#">Support</a>
+</div>
+</footer>
+<script src="/frontend/api-client.js"></script>
+<script>
+    const chatStatus = document.getElementById("chatStatus");
+    const loadedResumeName = document.getElementById("loadedResumeName");
+    const chatConfidenceLabel = document.getElementById("chatConfidenceLabel");
+    const chatConfidenceBar = document.getElementById("chatConfidenceBar");
+    const chatResumeUploadControls = document.getElementById("chatResumeUploadControls");
+    const chatResumeFile = document.getElementById("chatResumeFile");
+    const chatParseResumeButton = document.getElementById("chatParseResumeButton");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatMessageInput = document.getElementById("chatMessageInput");
+    const sendChatButton = document.getElementById("sendChatButton");
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function normalizeAssistantText(value) {
+        return String(value || "")
+            .replace(/\r\n/g, "\n")
+            .replace(/\uFFFD/g, "-")
+            .replace(/\*{3,}/g, "**")
+            .trim();
+    }
+
+    function formatAssistantTextToHtml(value) {
+        const normalized = normalizeAssistantText(value);
+        if (!normalized) {
+            return "";
+        }
+
+        const lines = normalized.split("\n");
+        const renderedLines = lines.map((rawLine) => {
+            const line = rawLine.trim();
+            if (!line) {
+                return "<br/>";
+            }
+
+            const bulletMatch = line.match(/^[-*]\s+(.+)/);
+            const numberedMatch = line.match(/^\d+\.\s+(.+)/);
+            const content = bulletMatch ? bulletMatch[1] : numberedMatch ? numberedMatch[1] : line;
+            let escaped = escapeHtml(content)
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/`([^`]+)`/g, '<code class="rounded bg-white/10 px-1 py-0.5 text-[12px]">$1</code>');
+
+            if (bulletMatch) {
+                return `&bull; ${escaped}`;
+            }
+            if (numberedMatch) {
+                const marker = line.match(/^(\d+)\./);
+                return `${marker ? marker[1] : "1"}. ${escaped}`;
+            }
+            return escaped;
+        });
+
+        return renderedLines.join("<br/>");
+    }
+
+    function setStatus(message, isError) {
+        chatStatus.textContent = message;
+        chatStatus.className = isError ? "text-xs text-red-300" : "text-xs text-cyan-300";
+    }
+
+    function confidenceToUi(value) {
+        const score = Math.max(0, Math.min(100, Number(value) || 0));
+        chatConfidenceLabel.textContent = `${score}%`;
+        chatConfidenceBar.style.width = `${score}%`;
+    }
+
+    function appendMessage(role, text, options) {
+        const isUser = role === "user";
+        const useHtml = !!(options && options.useHtml);
+        const wrapper = document.createElement("div");
+        wrapper.className = isUser
+            ? "flex gap-4 max-w-[85%] self-end flex-row-reverse"
+            : "flex gap-4 max-w-[85%] self-start";
+
+        const iconBox = document.createElement("div");
+        iconBox.className = isUser
+            ? "flex-shrink-0 w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+            : "flex-shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center border border-white/5";
+
+        const icon = document.createElement("span");
+        icon.className = isUser
+            ? "material-symbols-outlined text-sm"
+            : "material-symbols-outlined text-secondary-fixed-dim text-[18px]";
+        icon.textContent = isUser ? "person" : "auto_awesome";
+        iconBox.appendChild(icon);
+
+        const body = document.createElement("div");
+        body.className = isUser ? "space-y-2 text-right" : "space-y-2";
+
+        const bubble = document.createElement("div");
+        bubble.className = isUser
+            ? "bg-primary-container text-white p-5 rounded-2xl rounded-tr-none text-sm leading-relaxed font-medium"
+            : "bg-surface-container-low text-on-surface p-5 rounded-2xl rounded-tl-none border border-white/5 text-sm leading-relaxed";
+
+        if (useHtml) {
+            bubble.innerHTML = text;
+        } else {
+            bubble.textContent = text;
+        }
+
+        body.appendChild(bubble);
+        wrapper.appendChild(iconBox);
+        wrapper.appendChild(body);
+
+        chatMessages.appendChild(wrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return { wrapper, bubble };
+    }
+
+    function updateAssistantBubble(messageRef, text) {
+        if (!messageRef || !messageRef.bubble) {
+            return;
+        }
+        messageRef.bubble.innerHTML = formatAssistantTextToHtml(text);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function streamChatAnswer(payload, onChunk) {
+        const response = await fetch(`${AIJobAssistantAPI.getApiBase()}/api/v1/chat/query/stream`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const rawText = await response.text();
+            let parsed = null;
+            try {
+                parsed = JSON.parse(rawText);
+            } catch (error) {
+                parsed = null;
+            }
+            const message = parsed && parsed.detail ? parsed.detail : `Request failed (${response.status})`;
+            throw new Error(message);
+        }
+
+        if (!response.body) {
+            throw new Error("Streaming response body is unavailable.");
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+                break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const rawLine of lines) {
+                const line = rawLine.trim();
+                if (!line) {
+                    continue;
+                }
+
+                let event = null;
+                try {
+                    event = JSON.parse(line);
+                } catch (error) {
+                    continue;
+                }
+
+                if (event.type === "error") {
+                    throw new Error(event.detail || "Streaming failed.");
+                }
+
+                if ((event.type === "chunk" || event.type === "done") && typeof onChunk === "function") {
+                    onChunk(event.answer || "", event.type === "done", event);
+                }
+            }
+        }
+
+        const trailing = buffer.trim();
+        if (!trailing) {
+            return;
+        }
+
+        try {
+            const event = JSON.parse(trailing);
+            if (event.type === "error") {
+                throw new Error(event.detail || "Streaming failed.");
+            }
+            if ((event.type === "chunk" || event.type === "done") && typeof onChunk === "function") {
+                onChunk(event.answer || "", event.type === "done", event);
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                throw error;
+            }
+        }
+    }
+
+    function getInferenceConfig() {
+        return AIJobAssistantAPI.getInferenceConfig();
+    }
+
+    chatParseResumeButton.addEventListener("click", async () => {
+        const file = chatResumeFile.files && chatResumeFile.files[0];
+        if (!file) {
+            setStatus("Please select a resume file first.", true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        AIJobAssistantAPI.appendInferenceFields(formData);
+
+        try {
+            chatParseResumeButton.disabled = true;
+            setStatus("Parsing and indexing resume for chat...", false);
+            const result = await AIJobAssistantAPI.request("/api/v1/resume/parse", {
+                method: "POST",
+                body: formData,
+                isFormData: true,
+            });
+            AIJobAssistantAPI.setResumeContext(result.raw_text || "", result.resume_data || {});
+            loadedResumeName.textContent = file.name;
+            confidenceToUi(100);
+            setStatus("Resume parsed successfully. You can chat now.", false);
+            appendMessage("assistant", "Resume context loaded. Ask me anything about your skills, experience, or job fit.");
+        } catch (error) {
+            setStatus(`Resume parse failed: ${error.message}`, true);
+        } finally {
+            chatParseResumeButton.disabled = false;
+        }
+    });
+
+    async function sendMessage() {
+        const message = chatMessageInput.value.trim();
+        if (!message) {
+            return;
+        }
+
+        try {
+            sendChatButton.disabled = true;
+            appendMessage("user", message);
+            chatMessageInput.value = "";
+            setStatus("Streaming answer...", false);
+            const inferenceConfig = getInferenceConfig();
+            const assistantMessage = appendMessage("assistant", "", { useHtml: true });
+            let latestAnswer = "";
+
+            await streamChatAnswer(
+                {
+                    message,
+                    provider: inferenceConfig.provider,
+                    model: inferenceConfig.model,
+                    think: inferenceConfig.think,
+                },
+                (answerText, isDone) => {
+                    latestAnswer = answerText;
+                    updateAssistantBubble(assistantMessage, latestAnswer);
+                    if (isDone) {
+                        setStatus("Chat response streamed.", false);
+                    }
+                }
+            );
+
+            if (!latestAnswer) {
+                updateAssistantBubble(assistantMessage, "No answer returned.");
+            }
+        } catch (error) {
+            appendMessage("assistant", `I could not complete that request: ${error.message}`);
+            setStatus(`Chat failed: ${error.message}`, true);
+        } finally {
+            sendChatButton.disabled = false;
+        }
+    }
+
+    sendChatButton.addEventListener("click", sendMessage);
+    chatMessageInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    if (AIJobAssistantAPI.getResumeText()) {
+        confidenceToUi(100);
+        loadedResumeName.textContent = "Resume context loaded from local session";
+        if (chatResumeUploadControls) {
+            chatResumeUploadControls.classList.add("hidden");
+        }
+        setStatus("Using resume uploaded on homepage. Ask your questions.", false);
+    }
+</script>
+</body></html>

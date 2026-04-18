@@ -17,17 +17,26 @@ from typing import Any, Dict, List, Tuple
 
 import requests
 
+from functions.common.llama_cpp_client import chat_completion as llama_cpp_chat_completion
+
 logger = logging.getLogger(__name__)
 OLLAMA_NUM_GPU = int(os.getenv("OLLAMA_NUM_GPU", "-1"))
 OLLAMA_CHAT_URL = os.getenv("OLLAMA_CHAT_URL", "http://127.0.0.1:11434/api/chat")
 
 
 class InterviewManager:
-    def __init__(self, output_dir: str = "temp_audio", model: str = "qwen3.5:2b", think: bool = True):
+    def __init__(
+        self,
+        output_dir: str = "temp_audio",
+        provider: str = "ollama",
+        model: str = "qwen3.5:2b",
+        think: bool = True,
+    ):
         self.history: List[Dict[str, str]] = []
         self.scores: List[Dict[str, Any]] = []
         self.current_question = ""
         self.output_dir = output_dir
+        self.provider = self._normalize_provider(provider)
         self.model = model
         self.think = think
         self.debug_events: List[str] = []
@@ -39,7 +48,9 @@ class InterviewManager:
         self._tts_wav_writer = None
 
         os.makedirs(self.output_dir, exist_ok=True)
-        self._debug(f"InterviewManager ready with model={self.model}, think={self.think}")
+        self._debug(
+            f"InterviewManager ready with provider={self.provider}, model={self.model}, think={self.think}"
+        )
 
         # Optional TTS init. If unavailable, text mode still works.
         self._init_tts_optional()
@@ -58,13 +69,80 @@ class InterviewManager:
     def get_debug_trace(self) -> str:
         return "\n".join(self.debug_events) if self.debug_events else "No interview debug events yet."
 
-    def configure_llm(self, model: str, think: bool = True) -> None:
+    @staticmethod
+    def _normalize_provider(provider: str | None) -> str:
+        value = (provider or "ollama").strip().lower()
+        if value in {"llama.cpp", "llama_cpp", "llamacpp"}:
+            return "llama.cpp"
+        if value == "gemini":
+            # Interview engine currently supports Ollama and llama.cpp paths.
+            return "ollama"
+        return value or "ollama"
+
+    def configure_llm(self, provider: str, model: str, think: bool = True) -> None:
+        normalized_provider = self._normalize_provider(provider)
         model = (model or "").strip() or self.model
-        if model == self.model and think == self.think:
+        if normalized_provider == self.provider and model == self.model and think == self.think:
             return
+        self.provider = normalized_provider
         self.model = model
         self.think = think
-        self._debug(f"LLM configured: model={self.model}, think={self.think}")
+        self._debug(f"LLM configured: provider={self.provider}, model={self.model}, think={self.think}")
+
+    @staticmethod
+    def _messages_to_prompt(messages: List[Dict[str, str]]) -> str:
+        lines: List[str] = []
+        for msg in messages:
+            role = (msg.get("role") or "user").upper()
+            content = (msg.get("content") or "").strip()
+            if content:
+                lines.append(f"{role}: {content}")
+        lines.append("ASSISTANT:")
+        return "\n\n".join(lines)
+
+    def _llama_cpp_chat(
+        self,
+        messages: List[Dict[str, str]],
+        timeout_sec: int = 60,
+        num_predict: int = 160,
+        temperature: float = 0.2,
+    ) -> str:
+        prompt = self._messages_to_prompt(messages)
+        content = self._invoke_with_timeout(
+            lambda: llama_cpp_chat_completion(
+                prompt,
+                model=self.model,
+                temperature=temperature,
+                max_tokens=num_predict,
+                timeout=timeout_sec,
+            ),
+            timeout_sec=timeout_sec + 2,
+            label="LlamaCppChat",
+        )
+        return self._clean_response(content)
+
+    def _chat_completion(
+        self,
+        messages: List[Dict[str, str]],
+        timeout_sec: int = 60,
+        num_predict: int = 160,
+        think_override: bool | None = None,
+        temperature: float = 0.2,
+    ) -> str:
+        if self.provider == "llama.cpp":
+            return self._llama_cpp_chat(
+                messages,
+                timeout_sec=timeout_sec,
+                num_predict=num_predict,
+                temperature=temperature,
+            )
+        return self._ollama_chat(
+            messages,
+            timeout_sec=timeout_sec,
+            num_predict=num_predict,
+            think_override=think_override,
+            temperature=temperature,
+        )
 
     def _invoke_with_timeout(self, fn, timeout_sec: int, label: str):
         result = {"value": None, "error": None}
@@ -209,7 +287,7 @@ class InterviewManager:
         ]
 
         try:
-            q_text = self._ollama_chat(messages, timeout_sec=70, num_predict=120)
+            q_text = self._chat_completion(messages, timeout_sec=70, num_predict=120)
             if not q_text:
                 raise ValueError("Empty response from interviewer model")
             self._debug(f"Start LLM response len={len(q_text)}")
@@ -265,7 +343,7 @@ class InterviewManager:
             },
         ]
 
-        raw = self._ollama_chat(
+        raw = self._chat_completion(
             eval_messages,
             timeout_sec=45,
             num_predict=100,
@@ -328,7 +406,7 @@ class InterviewManager:
         ]
 
         try:
-            next_q = self._ollama_chat(messages, timeout_sec=70, num_predict=140)
+            next_q = self._chat_completion(messages, timeout_sec=70, num_predict=140)
             if not next_q:
                 raise ValueError("Empty response from interviewer model")
             self._debug(f"Turn LLM response len={len(next_q)}")

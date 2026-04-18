@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ATS Scorer - AI Job Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Manrope:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-background": "#e2e2e2", "secondary-fixed": "#63f7ff", "surface-bright": "#393939", "primary-container": "#ff6b00", "surface-container-lowest": "#0e0e0e", "error-container": "#93000a", outline: "#a98a7d", "on-primary-container": "#572000", "outline-variant": "#5a4136", "on-secondary-fixed": "#002021", "on-secondary-container": "#006c71", "tertiary-fixed": "#e5e2e1", "on-tertiary-fixed": "#1c1b1b", primary: "#ffb693", "primary-fixed-dim": "#ffb693", "surface-container-low": "#1b1b1b", "on-tertiary-container": "#313131", "on-secondary-fixed-variant": "#004f53", "inverse-primary": "#a04100", "on-error-container": "#ffdad6", "on-surface": "#e2e2e2", "surface-tint": "#ffb693", "on-primary-fixed": "#351000", "inverse-on-surface": "#303030", tertiary: "#c8c6c5", "surface-container-high": "#2a2a2a", "tertiary-container": "#9a9898", "on-secondary": "#003739", "on-surface-variant": "#e2bfb0", "surface-variant": "#353535", background: "#131313", secondary: "#e6feff", "primary-fixed": "#ffdbcc", "secondary-container": "#00f4fe", "on-primary": "#561f00", "surface-container-highest": "#353535", "on-tertiary-fixed-variant": "#474746", error: "#ffb4ab", "secondary-fixed-dim": "#00dce5", "inverse-surface": "#e2e2e2", "on-error": "#690005", "on-primary-fixed-variant": "#7a3000", surface: "#131313", "surface-dim": "#131313", "surface-container": "#1f1f1f", "tertiary-fixed-dim": "#c8c6c5", "on-tertiary": "#313030"}, borderRadius: {DEFAULT: "0.125rem", lg: "0.25rem", xl: "0.5rem", full: "0.75rem"}, fontFamily: {headline: ["Space Grotesk"], body: ["Manrope"], label: ["Manrope"], display: "Space Grotesk"}}}};</script>
+<style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Public Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- Decorative Background Orbs -->
+<div class="orb w-[500px] h-[500px] bg-orange-600 top-[-100px] left-[-100px]"></div>
+<div class="orb w-[400px] h-[400px] bg-purple-600 bottom-[10%] right-[-50px]"></div>
+<div class="orb w-[300px] h-[300px] bg-purple-900 top-[40%] left-[20%] opacity-20"></div>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-gray-900/60 dark:bg-black/60 backdrop-blur-xl border-b border-white/10 dark:border-gray-800/50 shadow-2xl">
+<div class="flex justify-between items-center px-6 h-16 max-w-screen-2xl mx-auto">
+<div class="text-xl font-bold bg-gradient-to-r from-orange-400 to-purple-400 bg-clip-text text-transparent font-sans tracking-tight">
+                AI Job Assistant
+            </div>
+<div class="flex items-center space-x-4">
+<button class="p-2 text-gray-400 hover:bg-white/5 rounded-lg transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-gray-400 hover:bg-white/5 rounded-lg transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="professional headshot of a person with a friendly expression in a modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL_EvDwmPHe06Z3r_-oxQlc71DzEOtDGozl2XSIXnZm4Xmvjle6NEKP_ok65t8_JExtgwG4Er_wryJ6r0Uyfzg7ghiNYR2VDU3SnVHXsMvc6fR0NnIUtBUC62vcKOf3VgZwK8y-mFpLV7-QHFLLVIYvZj1iCNL-bRQ-NT1x00iMl2RrAHJsZHJNuxSYPrSGu8jOvfvYJa7jRTkEyOAdcg3BYqYBOg3n8dwPJ5NDFmXMZY7NU5gTtxUHF_kBtvuvcW-S7tBdbUepQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Input Section -->
+<div class="lg:col-span-7 space-y-6">
+<div class="space-y-2">
+<h1 class="text-4xl font-extrabold tracking-tight text-white">ATS Optimization</h1>
+<p class="text-gray-400 text-lg">Paste your target job description to analyze alignment with your current profile.</p>
+<p class="text-xs text-cyan-300" id="atsStatus">Waiting for resume and job description.</p>
+</div>
+<div class="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4" id="atsResumeUploadControls">
+<input accept=".pdf,.doc,.docx" class="md:col-span-2 w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-gray-200" id="resumeFile" type="file"/>
+<button class="px-4 py-3 bg-cyan-600/80 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all duration-300" id="parseResumeButton" type="button">Parse Resume</button>
+</div>
+<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+<label class="text-sm font-semibold text-gray-300 uppercase tracking-wider" for="atsJobDescription">Job Description</label>
+<select class="h-8 rounded-full border border-white/15 bg-white/5 px-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-cyan-400/60" id="atsProviderSelector" title="ATS provider">
+<option value="global">global (homepage)</option>
+<option value="gemini">gemini</option>
+<option value="ollama">ollama</option>
+<option value="llama.cpp">llamacpp</option>
+</select>
+</div>
+<textarea class="w-full h-96 bg-white/5 border border-white/10 rounded-xl p-4 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all resize-none" id="atsJobDescription" placeholder="Paste Job Description here..."></textarea>
+<div class="mt-6 flex justify-end">
+<button class="px-8 py-4 bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all duration-300 flex items-center gap-2" id="calculateAtsButton" type="button">
+<span>Calculate Score</span>
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Results Mockup (Bento Style) -->
+<div class="lg:col-span-5 space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<!-- Gauge Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+<span class="text-xs font-bold text-orange-400 uppercase tracking-widest mb-4">Match Score</span>
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-white/5" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" cx="64" cy="64" fill="transparent" id="scoreRing" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="80" stroke-width="8"></circle>
+</svg>
+<span class="absolute text-3xl font-extrabold text-white" id="atsScoreLabel">0%</span>
+</div>
+<p class="text-xs text-gray-400 mt-4" id="atsScoreSummary">Score will be shown after analysis.</p>
+</div>
+<!-- Radar Card Mockup -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">Breakdown</span>
+<div class="w-full h-32 relative">
+<!-- Visual placeholder for radar chart -->
+<div class="absolute inset-0 flex items-center justify-center opacity-30">
+<div class="w-24 h-24 border border-purple-500/40 rounded-full"></div>
+<div class="w-16 h-16 border border-purple-500/40 rounded-full absolute"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-full bg-gradient-to-tr from-purple-500/30 to-orange-500/30 clip-path-polygon" style="clip-path: polygon(50% 10%, 90% 40%, 75% 90%, 25% 90%, 10% 40%);"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-4" id="breakdownGrid">
+<span class="text-[10px] text-gray-400">Breakdown appears here.</span>
+</div>
+</div>
+</div>
+<!-- Missing Keywords -->
+<div class="glass-panel p-6 rounded-2xl">
+<h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-orange-400">label_important</span>
+                        Missing Keywords
+                    </h3>
+<div class="flex flex-wrap gap-2" id="missingKeywordsContainer">
+<span class="px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full text-xs text-orange-300 font-medium">No analysis yet.</span>
+</div>
+</div>
+<!-- Suggestions -->
+<div class="glass-panel p-6 rounded-2xl">
+<h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-purple-400">lightbulb</span>
+                        Suggestions for Improvement
+                    </h3>
+<ul class="space-y-3" id="suggestionsList">
+<li class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-orange-400 text-sm mt-1">check_circle</span>
+<p class="text-xs text-gray-400">Suggestions will appear after scoring.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 mt-auto bg-gray-950 dark:bg-black border-t border-white/5 dark:border-gray-900">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-4">
+<p class="text-gray-400 text-sm font-light">© 2026 Repswal Corporation.. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-gray-500 hover:text-orange-400 transition-colors text-sm font-light" href="#">Privacy Policy</a>
+<a class="text-gray-500 hover:text-orange-400 transition-colors text-sm font-light" href="#">Terms of Service</a>
+<a class="text-gray-500 hover:text-orange-400 transition-colors text-sm font-light" href="#">Help Center</a>
+<a class="text-gray-500 hover:text-orange-400 transition-colors text-sm font-light" href="#">Feedback</a>
+</div>
+</div>
+</footer>
+<script src="/frontend/api-client.js"></script>
+<script>
+    const ATS_PROVIDER_STORAGE_KEY = "ai_job_assistant_ats_provider";
+    const atsStatus = document.getElementById("atsStatus");
+    const atsResumeUploadControls = document.getElementById("atsResumeUploadControls");
+    const atsProviderSelector = document.getElementById("atsProviderSelector");
+    const resumeFileInput = document.getElementById("resumeFile");
+    const parseResumeButton = document.getElementById("parseResumeButton");
+    const atsTextArea = document.getElementById("atsJobDescription");
+    const calculateAtsButton = document.getElementById("calculateAtsButton");
+    const scoreRing = document.getElementById("scoreRing");
+    const atsScoreLabel = document.getElementById("atsScoreLabel");
+    const atsScoreSummary = document.getElementById("atsScoreSummary");
+    const breakdownGrid = document.getElementById("breakdownGrid");
+    const missingKeywordsContainer = document.getElementById("missingKeywordsContainer");
+    const suggestionsList = document.getElementById("suggestionsList");
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function setStatus(message, isError) {
+        atsStatus.textContent = message;
+        atsStatus.className = isError ? "text-xs text-red-300" : "text-xs text-cyan-300";
+    }
+
+    function renderBreakdown(breakdown) {
+        const entries = Object.entries(breakdown || {});
+        if (!entries.length) {
+            breakdownGrid.innerHTML = '<span class="text-[10px] text-gray-400">No breakdown data.</span>';
+            return;
+        }
+        breakdownGrid.innerHTML = entries
+            .map(([name, value]) => `<span class="text-[10px] text-gray-400">${escapeHtml(name)}: ${Math.round(Number(value))}%</span>`)
+            .join("");
+    }
+
+    function renderKeywords(keywords) {
+        const list = keywords || [];
+        if (!list.length) {
+            missingKeywordsContainer.innerHTML = '<span class="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full text-xs text-green-300 font-medium">No missing keywords.</span>';
+            return;
+        }
+        missingKeywordsContainer.innerHTML = list
+            .map((kw) => `<span class="px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full text-xs text-orange-300 font-medium">${escapeHtml(kw)}</span>`)
+            .join("");
+    }
+
+    function renderSuggestions(suggestions) {
+        const list = suggestions || [];
+        if (!list.length) {
+            suggestionsList.innerHTML = '<li class="flex gap-3 items-start"><span class="material-symbols-outlined text-green-400 text-sm mt-1">check_circle</span><p class="text-xs text-gray-400">No extra suggestions. Your resume is in good shape.</p></li>';
+            return;
+        }
+        suggestionsList.innerHTML = list
+            .map(
+                (s) =>
+                    `<li class="flex gap-3 items-start"><span class="material-symbols-outlined text-orange-400 text-sm mt-1">check_circle</span><p class="text-xs text-gray-400">${escapeHtml(s)}</p></li>`
+            )
+            .join("");
+    }
+
+    function renderScore(score) {
+        const safeScore = Number(score) || 0;
+        const circumference = 364.4;
+        const offset = circumference - (safeScore / 100) * circumference;
+        atsScoreLabel.textContent = `${Math.round(safeScore)}%`;
+        scoreRing.style.strokeDashoffset = String(offset.toFixed(1));
+        if (safeScore >= 80) {
+            atsScoreSummary.textContent = "Strong alignment detected.";
+        } else if (safeScore >= 60) {
+            atsScoreSummary.textContent = "Moderate alignment. Improve key gaps.";
+        } else {
+            atsScoreSummary.textContent = "Low alignment. Substantial improvements needed.";
+        }
+    }
+
+    function normalizeProvider(provider) {
+        const value = String(provider || "").trim().toLowerCase();
+        if (value === "gemini") {
+            return "gemini";
+        }
+        if (value === "llama.cpp" || value === "llamacpp" || value === "llama_cpp") {
+            return "llama.cpp";
+        }
+        return "ollama";
+    }
+
+    function getAtsProvider() {
+        if (!atsProviderSelector || atsProviderSelector.value === "global") {
+            return AIJobAssistantAPI.getProvider();
+        }
+        return normalizeProvider(atsProviderSelector.value);
+    }
+
+    function getInferenceConfig() {
+        return AIJobAssistantAPI.getInferenceConfig({ provider: getAtsProvider() });
+    }
+
+    parseResumeButton.addEventListener("click", async () => {
+        const file = resumeFileInput.files && resumeFileInput.files[0];
+        if (!file) {
+            setStatus("Please choose a resume file first.", true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        AIJobAssistantAPI.appendInferenceFields(formData, { provider: getAtsProvider() });
+
+        try {
+            parseResumeButton.disabled = true;
+            setStatus("Parsing resume and indexing content...", false);
+            const result = await AIJobAssistantAPI.request("/api/v1/resume/parse", {
+                method: "POST",
+                body: formData,
+                isFormData: true,
+            });
+            AIJobAssistantAPI.setResumeContext(result.raw_text || "", result.resume_data || {});
+            const suggestedRole = result.suggested_role ? ` Suggested role: ${result.suggested_role}.` : "";
+            setStatus(`Resume parsed successfully.${suggestedRole}`, false);
+        } catch (error) {
+            setStatus(`Resume parse failed: ${error.message}`, true);
+        } finally {
+            parseResumeButton.disabled = false;
+        }
+    });
+
+    calculateAtsButton.addEventListener("click", async () => {
+        const jobDescription = atsTextArea.value.trim();
+        if (jobDescription.length < 50) {
+            setStatus("Job description must be at least 50 characters.", true);
+            return;
+        }
+
+        try {
+            calculateAtsButton.disabled = true;
+            setStatus("Calculating ATS score...", false);
+            const inferenceConfig = getInferenceConfig();
+            const result = await AIJobAssistantAPI.request("/api/v1/ats/score", {
+                method: "POST",
+                body: {
+                    job_description: jobDescription,
+                    provider: inferenceConfig.provider,
+                    model: inferenceConfig.model,
+                    think: inferenceConfig.think,
+                },
+            });
+
+            renderScore(result.score);
+            renderBreakdown(result.breakdown);
+            renderKeywords(result.missing_keywords);
+            renderSuggestions(result.suggestions);
+            setStatus("ATS score updated from backend response.", false);
+        } catch (error) {
+            setStatus(`ATS scoring failed: ${error.message}`, true);
+        } finally {
+            calculateAtsButton.disabled = false;
+        }
+    });
+
+    (function initAtsProviderSelector() {
+        if (!atsProviderSelector) {
+            return;
+        }
+
+        const savedAtsProvider = localStorage.getItem(ATS_PROVIDER_STORAGE_KEY);
+        if (savedAtsProvider && ["gemini", "ollama", "llama.cpp"].includes(savedAtsProvider)) {
+            atsProviderSelector.value = savedAtsProvider;
+        } else {
+            atsProviderSelector.value = "global";
+        }
+
+        atsProviderSelector.addEventListener("change", () => {
+            if (atsProviderSelector.value === "global") {
+                localStorage.removeItem(ATS_PROVIDER_STORAGE_KEY);
+                setStatus(`ATS provider set to global (${AIJobAssistantAPI.getProvider()}).`, false);
+                return;
+            }
+
+            const provider = normalizeProvider(atsProviderSelector.value);
+            localStorage.setItem(ATS_PROVIDER_STORAGE_KEY, provider);
+            atsProviderSelector.value = provider;
+            setStatus(`ATS provider set to ${provider}.`, false);
+        });
+    })();
+
+    (function initResumeContext() {
+        if (!AIJobAssistantAPI.getResumeText()) {
+            return;
+        }
+
+        if (atsResumeUploadControls) {
+            atsResumeUploadControls.classList.add("hidden");
+        }
+        setStatus("Using resume uploaded on homepage. Paste job description and calculate score.", false);
+    })();
+</script>
+</body></html>

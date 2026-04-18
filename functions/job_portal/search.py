@@ -2,6 +2,7 @@
 Job Search Engine aggregating multiple remote job APIs.
 """
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import requests
 import xml.etree.ElementTree as ET
@@ -35,12 +36,28 @@ class JobSearchEngine:
         Returns:
             List of job dictionaries.
         """
-        all_jobs: List[Dict[str, Any]] = []
+        fetchers = [
+            self._fetch_remote_ok_jobs,
+            self._fetch_weworkremotely_jobs,
+            self._fetch_jobicy_jobs,
+            self._fetch_remotive_jobs,
+        ]
+        source_results: list[List[Dict[str, Any]]] = [[] for _ in fetchers]
 
-        all_jobs.extend(self._fetch_remote_ok_jobs())
-        all_jobs.extend(self._fetch_weworkremotely_jobs())
-        all_jobs.extend(self._fetch_jobicy_jobs())
-        all_jobs.extend(self._fetch_remotive_jobs())
+        with ThreadPoolExecutor(max_workers=len(fetchers)) as executor:
+            futures = {
+                executor.submit(fetcher): idx for idx, fetcher in enumerate(fetchers)
+            }
+            for future in as_completed(futures):
+                index = futures[future]
+                try:
+                    source_results[index] = future.result() or []
+                except Exception as exc:
+                    logger.warning("Job source fetcher %s failed: %s", index, exc)
+
+        all_jobs: List[Dict[str, Any]] = []
+        for jobs in source_results:
+            all_jobs.extend(jobs)
 
         return self._filter_normalized_jobs(all_jobs, query)
 
