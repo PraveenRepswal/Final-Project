@@ -16,6 +16,7 @@ from backend_api.routers.interview import router as interview_router
 from backend_api.routers.jobs import router as jobs_router
 from backend_api.routers.resume import router as resume_router
 from backend_api.routers.tracker import router as tracker_router
+from backend_api.database import engine, Base
 
 load_dotenv()
 
@@ -56,6 +57,12 @@ if FRONTEND_DIR.exists():
 if TEMP_AUDIO_DIR.exists():
     app.mount("/temp_audio", StaticFiles(directory=str(TEMP_AUDIO_DIR)), name="temp_audio")
 
+
+@app.on_event("startup")
+async def startup_event():
+    import backend_api.models # Ensure models are loaded
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.get("/app", include_in_schema=False)
 def app_home() -> FileResponse:

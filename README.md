@@ -1,123 +1,226 @@
-# AI Job Assistant - Resume Parser, ATS, Chat & Interview
+# AI Job Assistant
 
-AI-powered job assistance platform for resume analysis, job search, and AI mock interviews.
+AI Job Assistant is an API-first platform for resume intelligence and job search workflows.
+It combines resume parsing, ATS scoring, resume-grounded chat (RAG), remote job search, semantic job ranking, mock interview simulation, and job application tracking.
 
-> **Note**: For detailed technical specifications, dependency versions, and model internals, please read [Project details.md](Project%20details.md).
+For deeper architecture and flow notes, see [Project details.md](Project%20details.md).
 
-## Features ✅
+## Current Progress Snapshot
 
-### 1. Resume Parsing
-- 📄 **Upload PDF/DOCX resumes**
-- 🤖 **AI-Powered Extraction** - Supports **Ollama**, **llama.cpp**, and Gemini for intelligent parsing
-- 📊 **Structured Data**: Extracts detailed Contact Info, Education, Experience, Projects, and Skills.
-- 🛠️ **Debug Info**: View raw model output, thought process, and parsed JSON.
+### Completed and Integrated
+- FastAPI backend with modular routers and shared runtime state.
+- Static multi-page frontend served by backend.
+- Resume parsing with provider switching (Ollama, Gemini, llama.cpp).
+- ATS scoring with LLM-first path and fallback behavior.
+- RAG chat over parsed resume text with streaming support.
+- Remote job search + semantic ranking.
+- Voice mock interview flow (start, turn, end, report).
+- JSON-backed application tracker CRUD + stats.
 
-### 2. ATS Scoring
-- 🎯 **Score Calculation**: Analytics against a Job Description.
-- 🔍 **Keyword Analysis**: Identifies missing and matching keywords.
-- 📈 **Visualizations**: Gauge and Radar charts for quick analysis.
+### Current Implementation Status
+- Single-user session state is active and stable.
+- Tracker persistence is file-based (`data/applications.json`).
+- RAG vector index is in-memory (recreated on app restart).
+- Frontend pages are feature-connected via `frontend/api-client.js`.
 
-### 3. Chat with Resume (RAG)
-- 💬 **Interactive Chat**: Ask questions about the candidate based on the resume.
-- 🧠 **RAG Engine**: Uses local vector store (Qdrant) and Embeddings (Sentence-Transformers).
+### Not Yet Implemented
+- Multi-user authentication and role-based access.
+- Database persistence for resumes/interviews/RAG vectors.
+- Production deployment profile (workers, scaling, observability).
 
-### 4. Job Search & Matching
-- 🔎 **Remote Job Search**: Fetches jobs from Remote OK, We Work Remotely, Jobicy, and Remotive.
-- ⚡ **Semantic Matching**: Matches your resume profile against job descriptions.
+## Key Features
 
-### 5. AI Mock Interviewer
-- 🗣️ **Voice Interaction**: Real-time voice-to-voice interview practice.
-- 📝 **Deferred Feedback**: Receive a comprehensive performance report collecting all questions and scores at the end.
-- ⚙️ **Configurable Models**: Supports Qwen3-ASR, Faster Whisper, and Wav2Vec2.
+### Resume Parsing
+- Accepts PDF and DOCX files.
+- Extracts structured profile fields (contact, education, experience, projects, skills, suggested roles).
+- Stores parsed resume data and text in app state.
+- Ingests resume text into RAG chunks automatically after parsing.
+
+### ATS Scoring
+- Scores parsed resume against job description.
+- Returns score, breakdown, missing keywords, formatting issues, and suggestions.
+- Supports provider-aware model routing.
+
+### Resume Chat (RAG)
+- Resume-grounded Q and A.
+- Uses Sentence-Transformers embeddings with Qdrant (in-memory).
+- Supports standard and streaming query endpoints.
+
+### Job Search and Ranking
+- Searches remote jobs via integrated job sources.
+- Ranks jobs semantically against resume text/profile.
+- Reuses embedding model from RAG engine.
+
+### Mock Interview
+- Start interview with resume context.
+- Upload spoken answers turn by turn.
+- STT -> interviewer response -> optional TTS.
+- End interview to receive compiled report.
+
+### Application Tracker
+- Create, read, update, delete job applications.
+- Track status, role type, date, URL, notes.
+- Stats endpoint for total/interviews/offers/rejections.
+- Data persisted to JSON file.
+
+## Architecture
+
+- Backend: FastAPI with routers in `backend_api/routers`.
+- Domain logic: `functions/*` modules.
+- Frontend: static HTML + JS in `frontend`.
+- Runtime state: `backend_api/state.py`.
+- Static entry points:
+  - `/app`
+  - `/app/{page_name}`
+
+## API Overview
+
+Base URL: `http://127.0.0.1:8000`
+
+### Health
+- `GET /api/v1/health`
+- `GET /api/v1/system/status`
+
+### Resume
+- `POST /api/v1/resume/parse`
+
+### ATS
+- `POST /api/v1/ats/score`
+
+### Chat
+- `POST /api/v1/chat/query`
+- `POST /api/v1/chat/query/stream`
+
+### Jobs
+- `POST /api/v1/jobs/search`
+- `POST /api/v1/jobs/rank`
+
+### Interview
+- `POST /api/v1/interview/start`
+- `POST /api/v1/interview/turn`
+- `POST /api/v1/interview/end`
+
+### Tracker
+- `GET /api/v1/tracker/applications`
+- `GET /api/v1/tracker/applications/{app_id}`
+- `POST /api/v1/tracker/applications`
+- `PUT /api/v1/tracker/applications/{app_id}`
+- `DELETE /api/v1/tracker/applications/{app_id}`
+- `GET /api/v1/tracker/stats`
+- `GET /api/v1/tracker/reference/statuses`
+- `GET /api/v1/tracker/reference/role-types`
 
 ## Setup
 
 ### Prerequisites
 - Python 3.12+
-- [Ollama](https://ollama.ai/) with model `qwen3.5:2b`
-- **NVIDIA GPU** (Recommended for Whisper STT)
+- pip
+- Optional provider backends:
+  - Ollama for local model serving
+  - Gemini API key
+  - llama.cpp OpenAI-compatible server
 
-### Installation
+### 1) Create and activate virtual environment (Windows)
 
-1. **Clone and navigate to project**:
-   ```bash
-   git clone <repo-url>
-   cd ai-job-assistant
-   ```
-
-2. **Create virtual environment**:
-   ```bash
-   python -m venv .venv
-   .\.venv\Scripts\activate  # Windows
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   *Note: If you have an NVIDIA GPU, verify that `nvidia-cublas-cu12` and `nvidia-cudnn-cu12` are installed for Faster Whisper support.*
-
-4. **Ensure Ollama is running**:
-   ```bash
-   ollama serve
-   ollama pull qwen3.5:2b
-   ```
-
-5. **(Optional) Setup Gemini**:
-   Create a `.env` file and add:
-   ```env
-   GEMINI_API_KEY=your_key_here
-   ```
-
-6. **(Optional) Setup llama.cpp server**:
-   Install and run llama.cpp OpenAI-compatible server:
-   ```bash
-   pip install "llama-cpp-python[server]"
-   python -m llama_cpp.server --model path/to/model.gguf --host 127.0.0.1 --port 8000
-   ```
-
-   Add to `.env` when using a custom endpoint/model:
-   ```env
-   LLAMA_CPP_BASE_URL=http://127.0.0.1:8000
-   LLAMA_CPP_MODEL=local-model
-   # Optional if your proxy/server requires auth
-   LLAMA_CPP_API_KEY=
-   ```
-
-## Usage
-
-### Run the Application
-
-```bash
-python main.py
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-The Gradio interface will open at: `http://127.0.0.1:7860`
+### 2) Install dependencies
 
-### Using the Interface
+```powershell
+pip install -r requirements.txt
+```
 
-1. **Resume Parser**: Upload -> Parse.
-2. **ATS Scorer**: Paste JD -> View Score.
-3. **Chat**: QA with your resume.
-4. **Job Search**: Find matching roles.
-5. **Mock Interview**: Click "Start Interview", allow microphone, answer questions, and click "End & Report" to see your score.
+### 3) Configure environment variables
+
+Create a `.env` file in project root as needed:
+
+```env
+# Optional Gemini
+GEMINI_API_KEY=your_key_here
+
+# Optional llama.cpp
+LLAMA_CPP_BASE_URL=http://127.0.0.1:8000
+LLAMA_CPP_MODEL=local-model
+LLAMA_CPP_API_KEY=
+
+# Optional Ollama override
+OLLAMA_CHAT_URL=http://127.0.0.1:11434/api/chat
+```
+
+### 4) Start model provider(s)
+
+Example Ollama setup:
+
+```powershell
+ollama serve
+ollama pull qwen3.5:2b
+```
+
+```powershell
+llama-server -m "X:\LlamaModels\Qwen3.5-2B-GGUF\Qwen3.5-2B-Q8_0.gguf" -rea off
+```
+
+### 5) Run backend API
+
+```powershell
+uvicorn backend_api.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### 6) Open frontend
+
+- Home: `http://127.0.0.1:8000/app`
+- Any page directly: `http://127.0.0.1:8000/app/main.html`
+
+## Frontend Pages
+
+- `frontend/main.html` - Home and resume upload entry.
+- `frontend/ATS.html` - ATS scoring.
+- `frontend/CWR.html` - Chat with resume.
+- `frontend/JS.html` - Job search and ranking.
+- `frontend/Application Tracker.html` - Application tracker.
+- `frontend/MI.html` - Mock interview.
+- `frontend/Analytics.html` - Tracker analytics.
+- `frontend/Interview_report.html` - Interview report view.
 
 ## Project Structure
 
-```
-x:\Project\
-├── backend/
-│   ├── ats/            # ATS Scoring Logic
-│   ├── chat/           # RAG Engine & Chat Logic
-│   ├── common/         # Shared Pydantic Models
-│   ├── interview/      # Audio Processing & Interview Engine
-│   ├── job_portal/     # Job Search APIs
-│   └── resume_parsing/ # Resume Extraction
-├── main.py             # Application Entry Point
-├── Project details.md  # Deep technical documentation
-└── requirements.txt    # Dependencies
+```text
+backend_api/
+  main.py
+  provider.py
+  schemas.py
+  state.py
+  routers/
+functions/
+  resume_parsing/
+  ats/
+  chat/
+  interview/
+  job_portal/
+  tracker/
+frontend/
+data/
+tests/
 ```
 
-## License
+## Verification
 
-MIT
+Quick checks after startup:
+
+```powershell
+curl http://127.0.0.1:8000/api/v1/health
+curl http://127.0.0.1:8000/api/v1/system/status
+```
+
+Utility test scripts are available in `tests/`.
+
+## Known Limitations
+
+- App state is process-local and not shared across instances.
+- RAG index is not persisted across restart.
+- No user-level separation for tracker or interview sessions.
+- External provider availability directly impacts feature readiness.
+

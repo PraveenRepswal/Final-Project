@@ -274,12 +274,12 @@ class InterviewManager:
         self.scores = []
 
         system_prompt = (
-            "You are a technical interviewer. Keep replies concise (2-3 sentences) and always end with exactly one question. "
-            "Focus on resume-relevant technical depth."
+            "You are an interviewer. Keep replies concise and brief and always end your sentence with next question so that the interview flow continues."
+            "Focus on resume-relevant topics."
         )
         user_prompt = (
             f"Candidate context:\n{(resume_context or '')[:1200]}\n\n"
-            "Start the interview with a friendly opener and one technical question."
+            "Start the interview with a friendly opener and a question."
         )
         messages = [
             {"role": "system", "content": system_prompt},
@@ -392,7 +392,7 @@ class InterviewManager:
         messages = [
             {
                 "role": "system",
-                "content": "You are a technical interviewer. Give brief feedback in one sentence, then ask exactly one next technical question.",
+                "content": "You are a technical interviewer. Give brief feedback in one sentence, then ask exactly one next question.",
             },
             {
                 "role": "user",

@@ -3,7 +3,8 @@ from __future__ import annotations
 import os
 import tempfile
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend_api.provider import normalize_provider, select_model_for_provider
 from backend_api.schemas import (
@@ -13,6 +14,8 @@ from backend_api.schemas import (
     InterviewTurnResponse,
 )
 from backend_api.state import app_state
+from backend_api.database import get_db
+from backend_api.models import InterviewSession
 
 router = APIRouter(prefix="/api/v1/interview", tags=["interview"])
 
@@ -58,9 +61,20 @@ async def next_turn(
 
 
 @router.post("/end", response_model=InterviewEndResponse)
-def end_interview() -> InterviewEndResponse:
+async def end_interview(db: AsyncSession = Depends(get_db)) -> InterviewEndResponse:
     try:
         report = app_state.interview_manager.end_interview()
+        
+        # Save to database
+        db_record = InterviewSession(
+            model=app_state.interview_manager.llm_model or "unknown",
+            report=report,
+            score=None  # will add later
+        )
+        db.add(db_record)
+        await db.commit()
+        await db.refresh(db_record)
+        
         return InterviewEndResponse(report=report)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
