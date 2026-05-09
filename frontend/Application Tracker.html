@@ -107,6 +107,14 @@
             z-index: -1;
         }
     </style>
+    <style>
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen relative overflow-x-hidden">
 <!-- Ambient Orbs -->
@@ -114,22 +122,32 @@
 <div class="orb w-[600px] h-[600px] bg-secondary -bottom-48 -right-48"></div>
 <main class="w-full">
 <!-- Top Navigation -->
-<header class="sticky top-0 z-40 bg-black/80 backdrop-blur-md border-b border-white/5 px-8 py-6 flex justify-between items-center max-w-screen-2xl mx-auto">
-<div>
-<h2 class="text-2xl font-bold font-headline tracking-tight text-on-surface">Application Tracker</h2>
-<div class="flex gap-6 mt-4">
-<button class="font-label text-sm font-bold text-primary border-b-2 border-primary pb-1">Manage</button>
-<button class="font-label text-sm text-gray-500 hover:text-gray-200 transition-colors">Analytics</button>
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 navbar-glass sticky top-0 z-50">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined" style="font-size: 24px;">psychiatry</span>
 </div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">AI Job Assistant</h2>
+<span class="text-xs text-cyan-300" id="backendHealthStatus">Checking backend...</span>
+<select class="h-8 rounded-full border border-white/15 bg-white/5 px-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-cyan-400/60" id="providerSelector" title="Model provider">
+<option value="gemini">gemini</option>
+<option value="ollama">ollama</option>
+<option value="llama.cpp">llamacpp</option>
+</select>
 </div>
-<div class="flex items-center gap-6">
-<div class="relative group">
-<input class="bg-white/5 border border-white/10 rounded-full px-6 py-2.5 text-sm w-64 focus:ring-1 focus:ring-primary/50 transition-all outline-none" id="trackerSearchInput" placeholder="Search applications..." type="text"/>
-<span class="material-symbols-outlined absolute right-4 top-2.5 text-gray-500 text-lg">search</span>
-</div>
-<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 hover:border-primary/50 transition-colors cursor-pointer">
-<img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqvfTLKvEEbtqk3Zki0-o1lVmhkcdb8jHDeA_E7fRrDmLbGTjU00aXZ6hyBg2XgoIZZl8Wd36nGCnOXB9RrVSx_MT_OmH9fstNifag49PQ6A_2048LJ0qfWZI6rDXLSDl6JqNBlOloEX9_xgMBAVFECJ2TMASsmRa1To5FLFt605U_uPXeWVpWeJCz0A-Vee9Ddb1cLSYZEG9u6hi0NGLNh8ZJgCmMXymRQzuTmUsQpQpI9BhmheT0-GUxrLh_q3-r5l59p1F7sQ"/>
-</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/main.html">Home</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/ATS.html">ATS</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/CWR.html">Chat</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/JS.html">Jobs</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Application%20Tracker.html">Tracker</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/MI.html">Interview</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Analytics.html">Analytics</a>
+</nav>
+<button class="flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold leading-normal tracking-wide">
+<span class="truncate">Sign In</span>
+</button>
 </div>
 </header>
 <section class="p-8 max-w-screen-2xl mx-auto space-y-8">

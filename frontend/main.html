@@ -33,15 +33,21 @@
             color: #ffffff;
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .navbar-glass {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
 <body class="font-display bg-black min-h-screen flex flex-col antialiased">
-<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 glass-panel sticky top-0 z-50">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 navbar-glass sticky top-0 z-50">
 <div class="flex items-center gap-4 text-white">
 <div class="size-6 text-primary">
 <span class="material-symbols-outlined" style="font-size: 24px;">psychiatry</span>
@@ -56,10 +62,13 @@
 </div>
 <div class="flex flex-1 justify-end gap-8">
 <nav class="hidden md:flex items-center gap-8">
-<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Home</a>
-<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Features</a>
-<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Pricing</a>
-<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="#">Contact</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/main.html">Home</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/ATS.html">ATS</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/CWR.html">Chat</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/JS.html">Jobs</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Application%20Tracker.html">Tracker</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/MI.html">Interview</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Analytics.html">Analytics</a>
 </nav>
 <button class="flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold leading-normal tracking-wide">
 <span class="truncate">Sign In</span>

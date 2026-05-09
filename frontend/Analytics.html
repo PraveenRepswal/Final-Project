@@ -89,8 +89,45 @@
       z-index: 0;
     }
   </style>
+  <style>
+    .navbar-glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation (Homepage Consistent) -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 navbar-glass sticky top-0 z-50">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined" style="font-size: 24px;">psychiatry</span>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">AI Job Assistant</h2>
+<span class="text-xs text-cyan-300" id="backendHealthStatus">Checking backend...</span>
+<select class="h-8 rounded-full border border-white/15 bg-white/5 px-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-cyan-400/60" id="providerSelector" title="Model provider">
+<option value="gemini">gemini</option>
+<option value="ollama">ollama</option>
+<option value="llama.cpp">llamacpp</option>
+</select>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/main.html">Home</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/ATS.html">ATS</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/CWR.html">Chat</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/JS.html">Jobs</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Application%20Tracker.html">Tracker</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/MI.html">Interview</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Analytics.html">Analytics</a>
+</nav>
+<button class="flex items-center justify-center overflow-hidden rounded-full h-10 px-6 bg-primary text-white hover:bg-primary/90 transition-colors text-sm font-bold leading-normal tracking-wide">
+<span class="truncate">Sign In</span>
+</button>
+</div>
+</header>
 <!-- Side Navigation (Predicted Component Mapping) -->
 <aside class="fixed left-0 top-0 h-full w-64 z-40 bg-[#0e0e0e] flex flex-col pt-20 pb-8 h-full border-r border-[#353535]/20 hidden md:flex">
 <div class="px-8 mb-10">
@@ -127,28 +164,28 @@
 </div>
 </aside>
 <!-- Top Bar (Predicted Component Mapping) -->
-<header class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-3xl border-b border-[#353535]/30 flex justify-between items-center h-16 px-8 w-full">
-<div class="flex items-center gap-8">
-<span class="text-2xl font-black text-[#ffb693] tracking-tighter font-headline">Synthetic Luminary</span>
-<div class="hidden lg:flex items-center gap-6">
-<span class="text-[#e2e2e2]/60 font-medium font-headline hover:text-[#ffb693] transition-colors duration-300 cursor-pointer">Network</span>
-<span class="text-[#e2e2e2]/60 font-medium font-headline hover:text-[#ffb693] transition-colors duration-300 cursor-pointer">Learning</span>
-</div>
-</div>
-<div class="flex items-center gap-4">
-<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/10">
-<span class="material-symbols-outlined text-primary text-sm" data-icon="search">search</span>
-<input class="bg-transparent border-none text-sm focus:ring-0 text-on-surface-variant w-48 font-body" placeholder="Search analytics..." type="text"/>
-</div>
-<span class="material-symbols-outlined text-on-surface/60 hover:text-primary cursor-pointer transition-colors" data-icon="notifications">notifications</span>
-<span class="material-symbols-outlined text-on-surface/60 hover:text-primary cursor-pointer transition-colors" data-icon="settings">settings</span>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
-<img alt="User profile" data-alt="Portrait of a professional man in high-end studio lighting for user profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvNVg_6iLgXr76ABDChrG3wzgmtCjVD0Kao9H_dbOkwtlSNU7WvCCXXgwL44V38I-KoMal2Cy8Uliqm8YgmrV2UNGVXC_4r70RzoC-6Q8OGk4xy5wULxB2wJq6ni25XiLjWnnoQYpZydQdtrimTvmsG8yAtXIjZmLVc6CxDPC9SmqIKhUk3r5XlZFlr8afo1Knq6FzBvYvfWBkXZD8J7Jja6fLCsl4XfMS9APsdJOGfy2D1RXWWQhOe0r309eR7Yqi3zf1s9_cCw"/>
-</div>
-</div>
+<header class="fixed top-0 w-full z-40 bg-[#131313]/80 backdrop-blur-3xl border-b border-[#353535]/30 flex justify-between items-center h-16 px-8 w-full mt-20">
+  <div class="flex items-center gap-8">
+    <span class="text-2xl font-black text-[#ffb693] tracking-tighter font-headline">Synthetic Luminary</span>
+    <div class="hidden lg:flex items-center gap-6">
+      <span class="text-[#e2e2e2]/60 font-medium font-headline hover:text-[#ffb693] transition-colors duration-300 cursor-pointer">Network</span>
+      <span class="text-[#e2e2e2]/60 font-medium font-headline hover:text-[#ffb693] transition-colors duration-300 cursor-pointer">Learning</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/10">
+      <span class="material-symbols-outlined text-primary text-sm" data-icon="search">search</span>
+      <input class="bg-transparent border-none text-sm focus:ring-0 text-on-surface-variant w-48 font-body" placeholder="Search analytics..." type="text"/>
+    </div>
+    <span class="material-symbols-outlined text-on-surface/60 hover:text-primary cursor-pointer transition-colors" data-icon="notifications">notifications</span>
+    <span class="material-symbols-outlined text-on-surface/60 hover:text-primary cursor-pointer transition-colors" data-icon="settings">settings</span>
+    <div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+      <img alt="User profile" data-alt="Portrait of a professional man in high-end studio lighting for user profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvNVg_6iLgXr76ABDChrG3wzgmtCjVD0Kao9H_dbOkwtlSNU7WvCCXXgwL44V38I-KoMal2Cy8Uliqm8YgmrV2UNGVXC_4r70RzoC-6Q8OGk4xy5wULxB2wJq6ni25XiLjWnnoQYpZydQdtrimTvmsG8yAtXIjZmLVc6CxDPC9SmqIKhUk3r5XlZFlr8afo1Knq6FzBvYvfWBkXZD8J7Jja6fLCsl4XfMS9APsdJOGfy2D1RXWWQhOe0r309eR7Yqi3zf1s9_cCw"/>
+    </div>
+  </div>
 </header>
 <!-- Main Canvas -->
-<main class="md:ml-64 pt-24 pb-12 px-8 min-h-screen relative overflow-hidden">
+<main class="md:ml-64 pt-36 pb-12 px-8 min-h-screen relative overflow-hidden">
 <!-- Background Decorative Orbs -->
 <div class="orb absolute top-20 right-10 w-96 h-96 bg-primary/5 rounded-full"></div>
 <div class="orb absolute bottom-20 left-1/4 w-72 h-72 bg-secondary-container/5 rounded-full"></div>
