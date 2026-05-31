@@ -4,327 +4,315 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Interview Performance Report</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "primary-fixed": "#ffdbcc",
-                    "on-tertiary-fixed-variant": "#474746",
-                    "on-primary-fixed": "#351000",
-                    "secondary-container": "#00f4fe",
-                    "on-primary-container": "#572000",
-                    "surface-tint": "#ffb693",
-                    "error-container": "#93000a",
-                    "surface-container-lowest": "#0e0e0e",
-                    "outline": "#a98a7d",
-                    "primary-container": "#ff6b00",
-                    "on-secondary-fixed-variant": "#004f53",
-                    "on-surface": "#e2e2e2",
-                    "surface-container-high": "#2a2a2a",
-                    "on-error": "#690005",
-                    "tertiary-container": "#9a9898",
-                    "tertiary": "#c8c6c5",
-                    "surface-container": "#1f1f1f",
-                    "on-error-container": "#ffdad6",
-                    "surface-container-low": "#1b1b1b",
-                    "on-background": "#e2e2e2",
-                    "secondary": "#e6feff",
-                    "surface": "#131313",
-                    "error": "#ffb4ab",
-                    "on-secondary-container": "#006c71",
-                    "secondary-fixed-dim": "#00dce5",
-                    "inverse-primary": "#a04100",
-                    "surface-bright": "#393939",
-                    "primary-fixed-dim": "#ffb693",
-                    "secondary-fixed": "#63f7ff",
-                    "surface-container-highest": "#353535",
-                    "on-primary-fixed-variant": "#7a3000",
-                    "outline-variant": "#5a4136",
-                    "on-surface-variant": "#e2bfb0",
-                    "surface-dim": "#131313",
-                    "on-tertiary-container": "#313131",
-                    "background": "#131313",
-                    "inverse-surface": "#e2e2e2",
-                    "on-primary": "#561f00",
-                    "tertiary-fixed-dim": "#c8c6c5",
-                    "surface-variant": "#353535",
-                    "on-tertiary-fixed": "#1c1b1b",
-                    "on-secondary": "#003739",
-                    "tertiary-fixed": "#e5e2e1",
-                    "on-secondary-fixed": "#002021",
-                    "primary": "#ffb693",
-                    "on-tertiary": "#313030",
-                    "inverse-on-surface": "#303030"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Space Grotesk"],
-                    "body": ["Manrope"],
-                    "label": ["Manrope"]
-            }
-          },
-        },
-      }
-    </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(24px);
-        }
-        .glow-orange {
-            box-shadow: 0 0 40px rgba(255, 182, 147, 0.08);
-        }
-        .intelligence-glow {
-            box-shadow: 0 0 15px rgba(0, 220, 229, 0.2);
-        }
+                :root {
+                        color-scheme: dark;
+                        --bg: #111111;
+                        --panel: #191919;
+                        --panel-2: #222222;
+                        --text: #f2f2f2;
+                        --muted: #a1a1a1;
+                        --accent: #ff8a3d;
+                        --accent-2: #ffe6d8;
+                        --border: rgba(255, 255, 255, 0.08);
+                }
+                * { box-sizing: border-box; }
+                body {
+                        margin: 0;
+                        background: radial-gradient(circle at top, rgba(255, 138, 61, 0.08), transparent 35%), var(--bg);
+                        color: var(--text);
+                        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }
+                a { color: inherit; text-decoration: none; }
+                .page-shell { min-height: 100vh; display: flex; flex-direction: column; }
+                .card, .footer {
+                        border: 1px solid var(--border);
+                        background: rgba(17, 17, 17, 0.9);
+                        backdrop-filter: blur(12px);
+                }
+                .content, .footer-inner {
+                        max-width: 1120px;
+                        margin: 0 auto;
+                        padding: 0 24px;
+                }
+                .pill { background: var(--accent); color: #111; border: 0; border-radius: 999px; padding: 10px 16px; font-weight: 700; }
+                .content { flex: 1; padding-top: 56px; padding-bottom: 48px; }
+                .hero { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 32px; align-items: center; margin-bottom: 32px; }
+                .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; }
+                h1 { font-size: clamp(3rem, 8vw, 5.4rem); line-height: 0.95; margin: 0 0 16px; letter-spacing: -0.05em; }
+                .accent { color: var(--accent-2); }
+                .lead { max-width: 540px; color: var(--muted); font-size: 1.05rem; line-height: 1.6; }
+                .card { border-radius: 24px; padding: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+                .score-card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 280px; }
+                .score-ring {
+                        width: 160px; height: 160px; border-radius: 50%;
+                        display: grid; place-items: center; margin-bottom: 16px;
+                        background: conic-gradient(var(--accent) 0deg calc(var(--score-pct, 0) * 1%), #3a3a3a calc(var(--score-pct, 0) * 1%) 360deg);
+                        padding: 12px;
+                        transition: --score-pct 1s ease-out;
+                }
+                .score-ring-inner { width: 100%; height: 100%; border-radius: 50%; background: #151515; display: grid; place-items: center; }
+                .score-value { font-size: 3rem; font-weight: 800; line-height: 1; }
+                .score-label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.75rem; }
+                .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; margin-bottom: 24px; }
+                .section-title { margin: 0 0 16px; font-size: 1.25rem; }
+                .metric-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; margin-bottom: 22px; }
+                .metric-name { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+                .bar { height: 6px; background: #353535; border-radius: 999px; overflow: hidden; }
+                .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #ffbf92); }
+                .strength { display: flex; gap: 14px; margin-bottom: 18px; }
+                .bullet { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,138,61,0.14); color: var(--accent); display: grid; place-items: center; flex: 0 0 auto; margin-top: 2px; }
+                .strength h3, .report h2 { margin: 0 0 6px; }
+                .strength p { margin: 0; color: var(--muted); }
+                .report pre { white-space: pre-wrap; margin: 0; color: var(--text); line-height: 1.6; }
+                .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+                .btn { border: 1px solid var(--border); background: var(--panel-2); color: var(--text); border-radius: 14px; padding: 12px 16px; font-weight: 700; cursor: pointer; }
+                .btn-primary { background: var(--accent); color: #111; border-color: transparent; }
+                .footer { margin-top: auto; border-left: 0; border-right: 0; border-bottom: 0; }
+                .footer-inner { min-height: 72px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.8rem; gap: 16px; flex-wrap: wrap; }
+                @media (max-width: 900px) {
+                        .hero, .grid-2 { grid-template-columns: 1fr; }
+                        .nav { display: none; }
+                }
+                .navbar-glass {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                }
     </style>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+<style id="authModalStyle">
+.auth-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; }
+.auth-modal { background: #191919; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; position: relative; font-family: Inter, system-ui, sans-serif; color: #f2f2f2; }
+.auth-modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #a1a1a1; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0; }
+.auth-modal-close:hover { color: white; }
+.auth-modal h1 { margin: 0 0 20px; font-size: 1.8rem; color: white; }
+.auth-modal .form-group { margin-bottom: 20px; text-align: left; }
+.auth-modal label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #a1a1a1; }
+.auth-modal input { box-sizing: border-box; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: #222222; color: white; font-size: 1rem; }
+.auth-modal input:focus { outline: none; border-color: #ec5b13; }
+.auth-modal .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #ec5b13; color: white; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.auth-modal .btn:hover { opacity: 0.9; }
+.auth-modal .error { color: #ff5555; text-align: left; margin-bottom: 15px; font-size: 0.85rem; display: none; }
+.auth-modal .toggle-mode { margin-top: 20px; font-size: 0.9rem; color: #a1a1a1; }
+.auth-modal .toggle-mode a { color: #ec5b13; cursor: pointer; text-decoration: none; }
+</style>
+
 </head>
-<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
-<!-- TopNavBar -->
-<nav class="dark:bg-[#131313]/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-[0_0_15px_rgba(255,182,147,0.05)]">
-<div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
-<div class="text-2xl font-bold tracking-tighter text-[#ffb693] font-['Space_Grotesk']">Luminary AI</div>
-<div class="hidden md:flex items-center gap-8 font-['Space_Grotesk'] tracking-tight">
-<a class="text-[#e2e2e2]/60 hover:text-[#e2e2e2] transition-colors hover:bg-white/5 transition-all duration-300" href="#">Dashboard</a>
-<a class="text-[#e2e2e2]/60 hover:text-[#e2e2e2] transition-colors hover:bg-white/5 transition-all duration-300" href="#">Job Matches</a>
-<a class="text-[#e2e2e2]/60 hover:text-[#e2e2e2] transition-colors hover:bg-white/5 transition-all duration-300" href="#">Skill Paths</a>
-<a class="text-[#e2e2e2]/60 hover:text-[#e2e2e2] transition-colors hover:bg-white/5 transition-all duration-300" href="#">Resume Lab</a>
+<body>
+<div class="page-shell">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-10 py-4 navbar-glass sticky top-0 z-50">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 style="color: #ec5b13;">
 </div>
-<div class="flex items-center gap-6">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-[#e2e2e2]/60 cursor-pointer hover:text-[#ffb693]">notifications</span>
-<span class="material-symbols-outlined text-[#e2e2e2]/60 cursor-pointer hover:text-[#ffb693]">settings</span>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">AI Job Assistant</h2>
 </div>
-<button class="bg-primary-container text-on-primary-fixed px-5 py-2 rounded-xl font-bold text-sm hover:scale-95 transition-all">Elite Access</button>
-<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10">
-<img alt="Avatar" data-alt="close-up portrait of a professional man in a modern office with soft cinematic lighting and blurred tech background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC82RkMfmBVjHngfPpQn-SeKfK9ZC1C90acq4I2K6CFQTCqupUTgXj_essrLIxpSxq1DEfanqFaKEOfyauwc6k89qOjgaT1TcaPCWBIhtSTSxH58Qj-GW8esHF7n0Zk44HXQrdJ3DjWeKAmRca_oAmP6UWlDENPshQgk4Xytrfc46DJcp9CYllG_RO_A_IL58c89zgxEHl9NqzxMXroT01azO0nwaOwgcLphNTavRpRJzWvTm8G2NkS-BXzDhIbz_ix-jpQGZ2ATQ"/>
-</div>
-</div>
-</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/main.html">Home</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/ATS.html">ATS</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/CWR.html">Chat</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/JS.html">Jobs</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Application%20Tracker.html">Tracker</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/MI.html">Interview</a>
+<a class="text-white/80 hover:text-white transition-colors text-sm font-medium leading-normal" href="/app/Analytics.html">Analytics</a>
 </nav>
-<main class="max-w-screen-2xl mx-auto px-8 py-12">
-<!-- Hero Section: Overall Score -->
-<div class="flex flex-col md:flex-row items-end justify-between gap-12 mb-16">
-<div class="w-full md:w-1/2">
-<p class="font-label uppercase tracking-widest text-primary-fixed-dim mb-4">Post-Simulation Analysis</p>
-<h1 class="font-headline text-6xl md:text-7xl font-bold tracking-tighter text-on-surface mb-6 leading-none">
-                    Performance <br/><span class="text-secondary">Synthesis.</span>
-</h1>
-<p class="text-on-surface/60 max-w-md text-lg leading-relaxed">
-                    Our neural analysis engine has processed your recent mock interview for the <span class="text-on-surface">Senior Systems Architect</span> role. Here is your competitive readiness profile.
-                </p>
+<button class="flex items-center justify-center overflow-hidden rounded-[9999px] h-10 px-6 bg-[#ec5b13] text-white hover:bg-[#ec5b13]/90 transition-colors text-sm font-bold leading-normal tracking-wide" style="font-family: 'Public Sans', sans-serif;">
+<span class="truncate">Sign In</span>
+</button>
 </div>
-<div class="w-full md:w-auto">
-<div class="glass-panel glow-orange rounded-[2rem] p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
-<div class="absolute inset-0 bg-gradient-to-br from-primary-container/10 to-transparent pointer-events-none"></div>
-<div class="relative">
-<!-- Score Gauge Placeholder -->
-<div class="w-48 h-48 rounded-full border-[12px] border-surface-container-highest flex items-center justify-center relative">
-<svg class="absolute inset-0 w-full h-full -rotate-90">
-<circle class="text-primary-container" cx="96" cy="96" fill="none" r="84" stroke="currentColor" stroke-dasharray="527" stroke-dashoffset="84" stroke-linecap="round" stroke-width="12"></circle>
-</svg>
-<div class="flex flex-col items-center">
-<span class="font-headline text-6xl font-bold text-on-surface tracking-tighter">84</span>
-<span class="font-label text-sm text-on-surface/40 uppercase tracking-widest mt-[-8px]">/ 100</span>
-</div>
-</div>
-</div>
-<div class="mt-8">
-<h3 class="font-headline text-xl font-medium text-secondary">Expert Level</h3>
-<p class="text-on-surface/40 text-xs uppercase tracking-[0.2em] mt-1">Overall Readiness</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Bento Grid Analysis -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
-<!-- Performance Categories -->
-<div class="md:col-span-8 glass-panel rounded-3xl p-8">
-<h2 class="font-headline text-2xl font-bold mb-10 flex items-center gap-3">
-<span class="material-symbols-outlined text-secondary">analytics</span>
-                    Dimensional Breakdown
-                </h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10">
-<!-- Communication -->
-<div class="space-y-3">
-<div class="flex justify-between items-end">
-<span class="font-label text-sm uppercase tracking-wider text-on-surface/70">Communication</span>
-<span class="font-headline text-lg text-primary">92%</span>
-</div>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[92%]"></div>
-</div>
-</div>
-<!-- Technical Knowledge -->
-<div class="space-y-3">
-<div class="flex justify-between items-end">
-<span class="font-label text-sm uppercase tracking-wider text-on-surface/70">Technical Knowledge</span>
-<span class="font-headline text-lg text-secondary">78%</span>
-</div>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-[78%]"></div>
-</div>
-</div>
-<!-- Confidence -->
-<div class="space-y-3">
-<div class="flex justify-between items-end">
-<span class="font-label text-sm uppercase tracking-wider text-on-surface/70">Confidence</span>
-<span class="font-headline text-lg text-primary">85%</span>
-</div>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[85%]"></div>
-</div>
-</div>
-<!-- Problem Solving -->
-<div class="space-y-3">
-<div class="flex justify-between items-end">
-<span class="font-label text-sm uppercase tracking-wider text-on-surface/70">Problem Solving</span>
-<span class="font-headline text-lg text-secondary">81%</span>
-</div>
-<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-[81%]"></div>
-</div>
-</div>
-</div>
-</div>
-<!-- Key Strengths -->
-<div class="md:col-span-4 bg-surface-container-low rounded-3xl p-8 border border-white/5">
-<h2 class="font-headline text-2xl font-bold mb-6 text-primary">Key Strengths</h2>
-<ul class="space-y-6">
-<li class="flex gap-4">
-<div class="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-primary text-sm" data-weight="fill">verified</span>
-</div>
-<div>
-<h4 class="font-bold text-on-surface">Architectural Clarity</h4>
-<p class="text-sm text-on-surface/60 mt-1">Excellent breakdown of microservices vs monolith trade-offs.</p>
-</div>
-</li>
-<li class="flex gap-4">
-<div class="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-primary text-sm" data-weight="fill">verified</span>
-</div>
-<div>
-<h4 class="font-bold text-on-surface">Articulate Delivery</h4>
-<p class="text-sm text-on-surface/60 mt-1">Maintained a steady pace with high-impact vocabulary.</p>
-</div>
-</li>
-<li class="flex gap-4">
-<div class="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-<span class="material-symbols-outlined text-primary text-sm" data-weight="fill">verified</span>
-</div>
-<div>
-<h4 class="font-bold text-on-surface">Culture Fit Alignment</h4>
-<p class="text-sm text-on-surface/60 mt-1">Strong demonstration of collaborative leadership values.</p>
-</div>
-</li>
-</ul>
-</div>
-<!-- Improvement Areas -->
-<div class="md:col-span-12 glass-panel rounded-3xl p-10 glow-orange">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-<h2 class="font-headline text-3xl font-bold">Optimization Protocol</h2>
-<span class="px-4 py-1.5 rounded-full bg-secondary-container/10 border border-secondary/20 text-secondary text-xs font-bold uppercase tracking-widest intelligence-glow">3 High-Impact Fixes</span>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-<div class="space-y-8">
-<div class="bg-surface-container p-6 rounded-2xl border-l-4 border-primary-container">
-<h4 class="text-primary font-bold flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined">warning</span>
-                                Quantify Your Impact
-                            </h4>
-<p class="text-on-surface/70 text-sm mb-4 leading-relaxed">When discussing the DevOps migration, you mentioned "significant improvements." Aim for specific metrics.</p>
-<div class="bg-black/40 p-4 rounded-xl font-mono text-xs space-y-2">
-<p class="text-on-error">You: "I helped the team move to AWS and things got faster."</p>
-<p class="text-secondary">AI Suggestion: "I spearheaded a cloud migration that reduced deployment latency by 40% and cut overhead by $12k/mo."</p>
-</div>
-</div>
-<div class="bg-surface-container p-6 rounded-2xl border-l-4 border-primary-container">
-<h4 class="text-primary font-bold flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined">code</span>
-                                Technical Depth: Scalability
-                            </h4>
-<p class="text-on-surface/70 text-sm mb-4 leading-relaxed">Your answer on database sharding was high-level. Mention specific partitioning strategies (e.g., hash-based).</p>
-</div>
-</div>
-<div class="relative h-full rounded-2xl overflow-hidden min-h-[300px]">
-<img alt="Data dashboard" class="absolute inset-0 w-full h-full object-cover opacity-40" data-alt="close-up of complex data visualization on a screen with glowing teal and orange charts in a dark tech environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeYPu0PPs9Dfa_4-lKSSHQRWkp7dhmu2nAdUAYrGPzBTE2yKuG8IaLe69uzOCuqeMxm7aItTyXgItKcGeFMS9TBCbEewBBQXvu9xHkSp3_uL61O1dzQ7fZEhUjtD-15v8GAFg8Th7p9AkTL6e9ioVsMeJIdxqxPYnM9-fNzNIo0GfLb-u5EgIuCb9LBfhnugW2LStYTi1GJ-ayTSDDh_PJYcHxoptZZ3xd4_Jg0ZV-ER_HMEMhM2HzTTXeindcY4diUbo0i5u1bg"/>
-<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
-<div class="absolute bottom-6 left-6 right-6">
-<h4 class="font-headline text-xl font-bold mb-2">AI Coaching Tip</h4>
-<p class="text-on-surface/80 text-sm">Practice the 'STAR' method (Situation, Task, Action, Result) more rigidly for behavior questions. Your 'Action' phase was 30% too short compared to the industry standard for senior roles.</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Transcript Summary -->
-<div class="md:col-span-12 glass-panel rounded-3xl p-8">
-<h3 class="font-headline text-xl font-bold mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined">history_edu</span>
-                    Conversation Highlights
-                </h3>
-<div class="flex flex-col md:flex-row gap-8">
-<div class="flex-1 space-y-4">
-<div class="flex gap-4">
-<span class="text-primary-fixed-dim text-xs font-bold w-12 pt-1">02:14</span>
-<p class="text-sm text-on-surface/70"><strong class="text-on-surface">System Design:</strong> You navigated the CAP theorem trade-offs with high precision, specifically noting the availability vs. consistency balance in banking apps.</p>
-</div>
-<div class="flex gap-4">
-<span class="text-primary-fixed-dim text-xs font-bold w-12 pt-1">08:45</span>
-<p class="text-sm text-on-surface/70"><strong class="text-on-surface">Conflict Resolution:</strong> Your example of handling a difficult stakeholder was empathetic but could benefit from a clearer resolution outcome.</p>
-</div>
-</div>
-<div class="md:w-1/3 flex flex-col justify-end gap-3">
-<button class="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-2 font-bold text-sm">
-<span class="material-symbols-outlined text-sm">description</span>
-                            Download PDF Report
-                        </button>
-<button class="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center gap-2 font-bold text-sm">
-<span class="material-symbols-outlined text-sm">replay</span>
-                            Practice Again
-                        </button>
-</div>
-</div>
-</div>
-</div>
-<!-- Call to Action -->
-<div class="bg-gradient-to-r from-primary-container to-[#ff914d] rounded-[2.5rem] p-12 text-center relative overflow-hidden group">
-<div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
-<img alt="Digital connections" class="w-full h-full object-cover" data-alt="abstract digital network connection lines with glowing nodes on a dark background in vibrant orange and blue" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnZ-vjQ_ahPlyS3zX0rHROJVJy7rH-ltau6qQjJ7plknVu_7xHNYpfzRY_cZ4vWr4iQ3nPCRWQ1z6lG4MuMUsobxlUB3UzBuWJB90aNKIL_9KGfy0cfwLCc38ntRGMtBq2xDhmEbC6W5ue6IjCw8NAbCxu4rg85WmZ8oNmLsRc8BhBnJMLeUrNNIQht2VX99XjR35C-D1Tkio6FDgWeSVl71N-wzDE30vkDT91ujP5gWaHsXCNdERbevnkdx7c1HBynPA8Nci_Kw"/>
-</div>
-<div class="relative z-10">
-<h2 class="font-headline text-4xl font-bold text-on-primary-fixed mb-4">Ready for the real world?</h2>
-<p class="text-on-primary-fixed/80 max-w-xl mx-auto mb-8 font-medium">Your score indicates you're in the top 5% of candidates for these 14 roles currently hiring.</p>
-<button class="bg-surface text-on-surface px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-2xl">
-                    View Job Matches
-                </button>
-</div>
-</div>
-</main>
-<!-- Footer -->
-<footer class="w-full py-12 mt-auto bg-gradient-to-t from-[#1f1f1f] to-transparent flex flex-col md:flex-row justify-between items-center px-12 border-t border-white/5">
-<div class="font-['Manrope'] text-xs uppercase tracking-widest text-[#353535] mb-4 md:mb-0">
-            © 2026 Repswal Corporation. Editorial Precision in Career Intelligence.
+</header>
+
+<main class="content">
+    <section class="hero">
+        <div>
+            <div class="eyebrow">Post-Simulation Analysis</div>
+            <h1>Performance <span class="accent">Synthesis.</span></h1>
+            <p class="lead">This page now pulls the interview summary from the backend, shows the overall score, and renders the full interview report instead of hard-coded placeholder sections.</p>
         </div>
-<div class="flex gap-8">
-<a class="font-['Manrope'] text-xs uppercase tracking-widest text-[#353535] hover:text-[#e6feff] transition-colors" href="#">Privacy</a>
-<a class="font-['Manrope'] text-xs uppercase tracking-widest text-[#353535] hover:text-[#e6feff] transition-colors" href="#">Protocol</a>
-<a class="font-['Manrope'] text-xs uppercase tracking-widest text-[#353535] hover:text-[#e6feff] transition-colors" href="#">Support</a>
-<a class="font-['Manrope'] text-xs uppercase tracking-widest text-[#353535] hover:text-[#e6feff] transition-colors" href="#">Insights</a>
-</div>
+
+        <div class="card score-card">
+            <div class="score-ring" aria-label="overall score">
+                <div class="score-ring-inner">
+                    <div style="display: flex; align-items: baseline; gap: 4px;">
+                        <span id="overallScore" class="score-value">—</span>
+                        <span class="score-label" style="text-transform: none; letter-spacing: 0; font-size: 1.25rem;">/ 10</span>
+                    </div>
+                </div>
+            </div>
+            <div id="readinessLabel" style="font-size: 1.25rem; font-weight: 800; margin-bottom: 4px;">Loading…</div>
+            <div class="score-label">Overall Readiness</div>
+            <div style="margin-top: 12px; color: var(--muted); font-size: 0.9rem;">Questions answered: <span id="questionsAnswered">—</span></div>
+        </div>
+    </section>
+
+    <section class="card report">
+            <h2 class="section-title">Full Interview Report</h2>
+        <div id="reportContainer" class="whitespace-pre-wrap text-sm text-gray-800" style="color: var(--text); line-height: 1.6; font-size: 0.95rem;">Loading report…</div>
+        <div class="actions">
+            <button id="downloadBtn" class="btn btn-primary" type="button">Download Report</button>
+            <button id="practiceBtn" class="btn" type="button">Practice Again</button>
+        </div>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+async function loadReport(){
+    const container = document.getElementById('reportContainer');
+    try{
+        const resp = await fetch('/api/v1/interview/end', {method: 'POST'});
+        if(!resp.ok) throw new Error('Server returned '+resp.status);
+        const data = await resp.json();
+        const report = data.report || '';
+        container.innerHTML = marked.parse(report);
+
+        const scoreMatch = report.match(/\*\*Overall Score:\*\*\s*([0-9.]+)\/10/);
+        const qMatch = report.match(/\*\*Questions Answered:\*\*\s*(\d+)/);
+        if(scoreMatch) {
+            const val = Number(scoreMatch[1]);
+            document.getElementById('overallScore').innerText = val;
+            document.querySelector('.score-ring').style.setProperty('--score-pct', (val * 10).toString());
+            document.querySelector('.score-ring').style.background = `conic-gradient(var(--accent) 0deg ${(val*36)}deg, #3a3a3a ${(val*36)}deg 360deg)`;
+        }
+        if(qMatch) document.getElementById('questionsAnswered').innerText = qMatch[1];
+        const scoreValue = scoreMatch ? Number(scoreMatch[1]) : null;
+        const readinessLabel = document.getElementById('readinessLabel');
+        if (scoreValue !== null) {
+            readinessLabel.innerText = scoreValue >= 8 ? 'Expert Level' : scoreValue >= 6 ? 'Strong' : 'Needs Practice';
+        } else {
+            readinessLabel.innerText = 'Review Ready';
+        }
+    }catch(err){
+        container.innerText = 'Failed to load report: ' + err.message;
+        document.getElementById('overallScore').innerText = '—';
+        document.getElementById('questionsAnswered').innerText = '—';
+        document.getElementById('readinessLabel').innerText = 'Unavailable';
+    }
+}
+
+document.getElementById('downloadBtn').addEventListener('click', ()=>{
+    const text = document.getElementById('reportContainer').innerText || '';
+    const blob = new Blob([text], {type: 'text/markdown'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'interview_report.md';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+});
+
+document.getElementById('practiceBtn').addEventListener('click', ()=>{
+    window.location.href = 'MI.html';
+});
+
+window.addEventListener('DOMContentLoaded', loadReport);
+</script>
+<footer class="footer">
+    <div class="footer-inner">
+        <div>© 2026 Repswal Corporation</div>
+        <div>Interview report pulled from backend on page load.</div>
+    </div>
 </footer>
+
+
+<!-- Auth Modal -->
+<div class="auth-modal-overlay" id="authModalOverlay">
+    <div class="auth-modal">
+        <button class="auth-modal-close" id="authModalClose">&times;</button>
+        <h1 id="authFormTitle">Sign In</h1>
+        <div id="authErrorMsg" class="error"></div>
+        <form id="authModalForm">
+            <div class="form-group" id="authNameGroup" style="display: none;">
+                <label for="authName">Name</label>
+                <input type="text" id="authName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="authUsername">Username</label>
+                <input type="text" id="authUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="authPassword">Password</label>
+                <input type="password" id="authPassword" required>
+            </div>
+            <button type="submit" class="btn" id="authSubmitBtn">Sign In</button>
+        </form>
+        <div class="toggle-mode">
+            <span id="authToggleText">Don't have an account? </span>
+            <a id="authToggleBtn">Register</a>
+        </div>
+    </div>
+</div>
+<script id="authModalScript">
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('authModalOverlay');
+    const closeBtn = document.getElementById('authModalClose');
+    let isLogin = true;
+    const formTitle = document.getElementById('authFormTitle');
+    const submitBtn = document.getElementById('authSubmitBtn');
+    const toggleText = document.getElementById('authToggleText');
+    const toggleBtn = document.getElementById('authToggleBtn');
+    const errorMsg = document.getElementById('authErrorMsg');
+
+    function openModal() { overlay.style.display = 'flex'; }
+    function closeModal() { overlay.style.display = 'none'; errorMsg.style.display = 'none'; }
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+
+    toggleBtn.addEventListener('click', () => {
+        isLogin = !isLogin;
+        if (isLogin) {
+            formTitle.innerText = "Sign In"; submitBtn.innerText = "Sign In";
+            toggleText.innerText = "Don't have an account? "; toggleBtn.innerText = "Register";
+            document.getElementById('authNameGroup').style.display = 'none';
+        } else {
+            formTitle.innerText = "Register"; submitBtn.innerText = "Create Account";
+            toggleText.innerText = "Already have an account? "; toggleBtn.innerText = "Sign In";
+            document.getElementById('authNameGroup').style.display = 'block';
+        }
+        errorMsg.style.display = 'none';
+    });
+
+    document.getElementById('authModalForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMsg.style.display = 'none';
+        const name = document.getElementById('authName') ? document.getElementById('authName').value : undefined;
+        const username = document.getElementById('authUsername').value;
+        const password = document.getElementById('authPassword').value;
+
+        try {
+            if (isLogin) {
+                const formData = new URLSearchParams(); formData.append('username', username); formData.append('password', password);
+                const res = await fetch('/api/v1/auth/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData });
+                if (!res.ok) throw new Error("Invalid username or password");
+                const data = await res.json();
+                localStorage.setItem("userToken", data.access_token); localStorage.setItem("username", username);
+                closeModal(); window.location.reload();
+            } else {
+                const payload = name ? { name, username, password } : { username, password };
+                const res = await fetch('/api/v1/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!res.ok) { const errorData = await res.json(); throw new Error(errorData.detail || "Registration failed"); }
+                alert("Registration successful! Please sign in."); toggleBtn.click();
+            }
+        } catch (err) { errorMsg.innerText = err.message; errorMsg.style.display = 'block'; }
+    });
+
+    const signinBtns = document.querySelectorAll('button');
+    signinBtns.forEach(btn => {
+        const span = btn.querySelector('.truncate');
+        if (span && (span.innerText.includes('Sign In') || span.innerText.includes('Sign Out'))) {
+            const token = localStorage.getItem('userToken');
+            const user = localStorage.getItem('username');
+            if (token) {
+                span.innerText = `Sign Out (${user})`;
+                btn.onclick = (e) => { e.preventDefault(); localStorage.removeItem('userToken'); localStorage.removeItem('username'); window.location.reload(); };
+            } else {
+                span.innerText = `Sign In`;
+                btn.onclick = (e) => { e.preventDefault(); openModal(); };
+            }
+        }
+    });
+});
+</script>
+
 </body></html>

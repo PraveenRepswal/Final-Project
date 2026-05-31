@@ -67,7 +67,7 @@ async def end_interview(db: AsyncSession = Depends(get_db)) -> InterviewEndRespo
         
         # Save to database
         db_record = InterviewSession(
-            model=app_state.interview_manager.llm_model or "unknown",
+            model=app_state.interview_manager.model or "unknown",
             report=report,
             score=None  # will add later
         )

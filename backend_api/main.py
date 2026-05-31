@@ -16,6 +16,7 @@ from backend_api.routers.interview import router as interview_router
 from backend_api.routers.jobs import router as jobs_router
 from backend_api.routers.resume import router as resume_router
 from backend_api.routers.tracker import router as tracker_router
+from backend_api.routers.auth import router as auth_router
 from backend_api.database import engine, Base
 
 load_dotenv()
@@ -50,6 +51,7 @@ app.include_router(chat_router)
 app.include_router(interview_router)
 app.include_router(jobs_router)
 app.include_router(tracker_router)
+app.include_router(auth_router, prefix="/api/v1")
 
 if FRONTEND_DIR.exists():
     app.mount("/frontend", StaticFiles(directory=str(FRONTEND_DIR)), name="frontend")

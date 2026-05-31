@@ -130,7 +130,12 @@ class ATSScorer:
         IMPORTANT: 
         - The 'breakdown' values should roughly sum up to the total 'score'.
         - 'Keywords' max 40, 'Skills' max 30, 'Formatting' max 10, 'Education' max 10, 'Experience' max 10.
+        - Limit 'missing_keywords' to at most 5 items.
+        - Limit 'formatting_issues' to at most 3 items.
+        - Limit 'suggestions' to at most 3 items.
+        - Keep 'reasoning' concise (maximum 2-3 sentences). Do not output a long chain of thought.
         - Return ONLY valid JSON.
+        - Strictly adhere to the output format. Do not include any text outside the JSON.
         """
         
         response_json_str = ""
@@ -155,7 +160,7 @@ class ATSScorer:
                 prompt=prompt,
                 model=self.model,
                 temperature=0.1,
-                max_tokens=2048,
+                max_tokens=4096,
                 json_mode=True,
                 json_schema=ATS_RESPONSE_SCHEMA,
                 timeout=180,
@@ -181,7 +186,38 @@ class ATSScorer:
         elif "```" in response_json_str:
              response_json_str = response_json_str.split("```")[1].split("```")[0]
              
-        data = json.loads(response_json_str.strip())
+        try:
+            data = json.loads(response_json_str.strip())
+        except json.JSONDecodeError as de:
+            logger.warning("Error parsing JSON from LLM: %s. Attempting regex extraction.", de)
+            import re
+            
+            score_match = re.search(r'"score"\s*:\s*(\d+)', response_json_str)
+            score_val = int(score_match.group(1)) if score_match else 0
+            
+            breakdown_dict = {}
+            for key in ["Keywords", "Skills", "Formatting", "Education", "Experience"]:
+                match = re.search(fr'"{key}"\s*:\s*([\d.]+)', response_json_str)
+                if match:
+                    breakdown_dict[key] = float(match.group(1))
+            
+            if not breakdown_dict:
+                breakdown_dict = {
+                    "Keywords": score_val * 0.4,
+                    "Skills": score_val * 0.3, 
+                    "Formatting": 10,
+                    "Education": 10,
+                    "Experience": score_val * 0.1
+                }
+                
+            return ATSResult(
+                score=score_val,
+                breakdown=breakdown_dict,
+                missing_keywords=["Extracted via Regex Fallback due to truncated JSON"],
+                formatting_issues=[],
+                suggestions=[],
+                reasoning="JSON parsing failed. Partial extraction via regex."
+            )
         
         breakdown = data.get("breakdown", {})
         score = data.get("score", 0)
@@ -305,7 +341,7 @@ class ATSScorer:
              if resp.status_code == 200:
                  content = resp.json()['message']['content']
                  import re
-                 match = re.search(r'\[.*\]', content)
+                 match = re.search(r'\[.*\]', content, flags=re.DOTALL)
                  if match: return json.loads(match.group(0))
              return []
         except:

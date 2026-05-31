@@ -19,7 +19,7 @@ Primary goals:
 
 Out-of-scope (current version):
 - Multi-user authentication and tenant isolation.
-- Database-backed persistence (tracker currently uses JSON file storage).
+- Full Database-backed persistence (tracker currently uses JSON file storage, but ATS history and Sessions are migrated to PostgreSQL).
 - Distributed deployment and autoscaling profiles.
 
 ## 3. Technology Stack
@@ -59,7 +59,8 @@ Out-of-scope (current version):
 - Backend-served static assets
 
 ### 3.7 Data and Storage
-- JSON file persistence for tracker data: data/applications.json
+- PostgreSQL via SQLAlchemy + asyncpg (for ATS score history and interview sessions)
+- Legacy JSON file persistence for tracker data (migration to PostgreSQL underway)
 - Ephemeral in-memory vector index for RAG
 - Temporary audio files: temp_audio/
 
@@ -77,7 +78,7 @@ The system has three logical layers:
   - current_resume_data
   - current_resume_text
   - cached last_fetched_jobs
-  - tracker instance (JSON-backed)
+  - tracker instance (JSON-backed, moving to SQLAlchemy)
   - interview manager instance
   - lazy-initialized RAG engine
 - Feature Routers:
@@ -103,7 +104,7 @@ Typical local deployment:
 3. Resume text is chunked and indexed into in-memory Qdrant.
 4. ATS, chat, and job ranking consume cached resume data/context.
 5. Interview service uses audio upload, STT, LLM turn generation, and optional TTS.
-6. Tracker service persists CRUD operations to applications.json.
+6. Tracker service currently persists CRUD operations to a local json file, with active migration toward PostgreSQL.
 
 ## 5. Low-Level Design (LLD)
 
@@ -312,8 +313,8 @@ Primary modules:
 
 Flow:
 1. CRUD endpoints validate enums (status, role_type) before mutation.
-2. ApplicationTracker loads JSON file on startup.
-3. add/update/delete operations mutate in-memory list and persist to disk.
+2. ApplicationTracker currently loads fallback JSON file on startup (moving to PostgreSQL).
+3. add/update/delete operations mutate in-memory list and persist to disk/db.
 4. stats endpoint computes summary buckets.
 5. reference endpoints expose valid statuses and role types.
 
@@ -425,12 +426,12 @@ Known limitations:
 - Simplicity over persistence: in-memory Qdrant avoids setup complexity.
 - Multi-provider flexibility adds branching complexity but improves portability.
 - Interview pipeline prioritizes responsiveness with timeout and fallback behavior.
-- JSON-file tracker is lightweight but not ideal for concurrent multi-user writes.
+- Legacy JSON-file tracker is being phased out in favor of PostgreSQL to handle robust multi-user writes.
 
 ## 13. Suggested Future Enhancements
 
 1. Add authentication and per-user session isolation.
-2. Replace tracker JSON storage with database (SQLite/PostgreSQL).
+2. Fully migrate tracker to the new PostgreSQL schema and deprecate the application.json storage.
 3. Persist vector index per user/resume and support multi-resume corpus.
 4. Add structured observability (metrics, tracing, log correlation IDs).
 5. Add unit/integration tests for routers and domain modules.

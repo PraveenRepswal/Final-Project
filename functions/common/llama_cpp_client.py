@@ -54,7 +54,8 @@ def _strip_think_tags(text: str) -> str:
     """Remove model-emitted think tags from output content."""
     if not text:
         return ""
-    cleaned = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    # Strip closed and unclosed think tags
+    cleaned = re.sub(r"<think>.*?(?:</think>|$)", "", text, flags=re.DOTALL | re.IGNORECASE)
     return cleaned.strip()
 
 

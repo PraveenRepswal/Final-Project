@@ -274,12 +274,12 @@ class InterviewManager:
         self.scores = []
 
         system_prompt = (
-            "You are an interviewer. Keep replies concise and brief and always end your sentence with next question so that the interview flow continues."
+            "You are an interviewer. Keep replies concise and brief and greet the candidate, ask a basic question about candidate.\n Always end your sentence with next question so that the interview flow continues."
             "Focus on resume-relevant topics."
         )
         user_prompt = (
             f"Candidate context:\n{(resume_context or '')[:1200]}\n\n"
-            "Start the interview with a friendly opener and a question."
+            "Start the interview with a friendly opener and a friendly question."
         )
         messages = [
             {"role": "system", "content": system_prompt},
@@ -338,7 +338,7 @@ class InterviewManager:
                 "content": (
                     f"Question: {question}\n"
                     f"Candidate Answer: {answer}\n"
-                    "Evaluate technical depth, clarity, correctness, and practical reasoning."
+                    "Evaluate answer depth, clarity, correctness, and practical reasoning."
                 ),
             },
         ]
